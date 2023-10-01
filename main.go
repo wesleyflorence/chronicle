@@ -11,6 +11,12 @@ import (
 	"github.com/wesleyflorence/chronicle/notion"
 )
 
+func main() {
+	app := fiber.New()
+	setupRoutes(app)
+	log.Fatal(app.Listen(":3000"))
+}
+
 func setupRoutes(app *fiber.App) {
 	godotenv.Load()
 	notionAPIKey := os.Getenv("NOTION_API_KEY")
@@ -18,10 +24,15 @@ func setupRoutes(app *fiber.App) {
 	client := notionapi.NewClient(notionapi.Token(notionAPIKey))
 
 	app.Get("/", hello)
+	app.Post("/api/v1/dig", handleDigestionEntry(client, digestionDbID))
+}
 
-	app.Post("/api/v1/dig", func(c *fiber.Ctx) error {
+func handleDigestionEntry(client *notionapi.Client, digestionDbID string) fiber.Handler {
+	return func(c *fiber.Ctx) error {
 		type Payload struct {
-			Message string `json:"message"`
+			Bristol int
+			Size    string
+			Note    string
 		}
 
 		var payload Payload
@@ -29,22 +40,15 @@ func setupRoutes(app *fiber.App) {
 			return err
 		}
 
-		page, err := notion.AppendDigestionEntry(client, digestionDbID, 4, "Large", "Sent from chronicle")
-
+		page, err := notion.AppendDigestionEntry(client, digestionDbID, payload.Bristol, payload.Size, payload.Note)
 		if err != nil {
 			return err
 		}
 
 		return c.JSON(page)
-	})
-}
-
-func main() {
-	app := fiber.New()
-	setupRoutes(app)
-	log.Fatal(app.Listen(":3000"))
+	}
 }
 
 func hello(c *fiber.Ctx) error {
-	return c.SendString("Hello, World!")
+	return c.SendString("Chronicle Home")
 }
