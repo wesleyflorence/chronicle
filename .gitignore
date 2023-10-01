@@ -19,3 +19,6 @@ go.work
 
 # Environment variables
 .env
+
+# Temp Output
+tmp/

@@ -21,10 +21,33 @@ func setupRoutes(app *fiber.App) {
 	godotenv.Load()
 	notionAPIKey := os.Getenv("NOTION_API_KEY")
 	digestionDbID := os.Getenv("DIGESTION_DB")
+	medicinePageID := os.Getenv("MEDICINE_PAGE")
 	client := notionapi.NewClient(notionapi.Token(notionAPIKey))
 
 	app.Get("/", hello)
 	app.Post("/api/v1/dig", handleDigestionEntry(client, digestionDbID))
+	app.Post("/api/v1/med", handleMedicineEntry(client, medicinePageID))
+}
+
+func handleMedicineEntry(client *notionapi.Client, medicinePageID string) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		type Payload struct {
+			Medicine string
+			Note     string
+		}
+
+		var payload Payload
+		if err := c.BodyParser(&payload); err != nil {
+			return err
+		}
+
+		page, err := notion.AppendMedicineEntry(client, medicinePageID, payload.Medicine, payload.Note)
+		if err != nil {
+			return err
+		}
+
+		return c.JSON(page)
+	}
 }
 
 func handleDigestionEntry(client *notionapi.Client, digestionDbID string) fiber.Handler {
