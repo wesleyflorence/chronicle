@@ -12,63 +12,22 @@ import (
 )
 
 func AppendMedicineEntry(client *notionapi.Client, medicinePageID, medicine, note string) (*notionapi.Page, error) {
-	// Get Block form Medicine Page
-	medsMap := make(map[string]string)
-	children, err := client.Block.GetChildren(context.Background(), notionapi.BlockID(
-		medicinePageID), &notionapi.Pagination{PageSize: 10})
+	medicineBlockID, err := getMedicineBlockID(client, medicinePageID, medicine)
 	if err != nil {
-		log.Fatal("Error Calling GetChildren")
+		log.Println("Error retrieving Medicine Block ID")
 		return nil, err
 	}
 
-	// Populate the Map using Medicine Child Page Titles
-	for _, child := range children.Results {
-		if block, ok := child.(*notionapi.ChildPageBlock); ok {
-			fmt.Println(block.ChildPage.Title)
-			medsMap[block.ChildPage.Title] = block.ID.String()
-		}
-	}
-	if _, ok := medsMap[medicine]; !ok {
-		return nil, fmt.Errorf("%s not found in the Medicine Page", medicine)
-	}
-
-	// Get the Blocks from the provided medicine's Page
-	medPage, err := client.Block.GetChildren(context.Background(), notionapi.BlockID(medsMap[medicine]),
-		&notionapi.Pagination{PageSize: 10})
+	dbID, err := getChildDbID(client, medicineBlockID)
 	if err != nil {
-		log.Fatal("Error Calling GetChildren2")
+		log.Println("Error retrieving Medicine DB ID")
 		return nil, err
 	}
 
-	// Get the Database ID
-	var childDbID string
-	for _, block := range medPage.Results {
-		if block, ok := block.(*notionapi.ChildDatabaseBlock); ok {
-			childDbID = block.ID.String()
-		}
-	}
-
-	// Query DB to get the row count to inc the Dose
-	query := notionapi.DatabaseQueryRequest{PageSize: 100}
-	var cursor *notionapi.Cursor
-	hasMore := true
-	dose := 1
-
-	for hasMore {
-		if cursor != nil {
-			query.StartCursor = *cursor
-		}
-		queryResult, err := client.Database.Query(context.Background(),
-			notionapi.DatabaseID(childDbID),
-			&query)
-
-		if err != nil {
-			log.Fatal("Error Making Query to get Count")
-			return nil, err
-		}
-		dose = dose + len(queryResult.Results)
-		cursor = &queryResult.NextCursor
-		hasMore = queryResult.HasMore
+	dose, err := getDose(client, *dbID)
+	if err != nil {
+		log.Println("Error retrieving Dose")
+		return nil, err
 	}
 
 	// Append the Row
@@ -95,10 +54,80 @@ func AppendMedicineEntry(client *notionapi.Client, medicinePageID, medicine, not
 				{Text: &notionapi.Text{Content: note}},
 			},
 		},
+		"Chronicle": notionapi.CheckboxProperty{
+			Checkbox: true,
+		},
+	}
+	request := buildPageCreateRequest(dbID.String(), &props)
+	return client.Page.Create(context.Background(), &request)
+}
+
+// Get Block form Medicine Page
+func getMedicineBlockID(client *notionapi.Client, medicinePageID, medicine string) (*notionapi.BlockID, error) {
+	medMap := make(map[string]string)
+	children, err := client.Block.GetChildren(context.Background(), notionapi.BlockID(
+		medicinePageID), &notionapi.Pagination{PageSize: 10})
+	if err != nil {
+		log.Println("Error Calling GetChildren")
+		return nil, err
 	}
 
-	request := buildPageCreateRequest(childDbID, &props)
-	return client.Page.Create(context.Background(), &request)
+	// Populate the Map using Medicine Child Page Titles
+	for _, child := range children.Results {
+		if block, ok := child.(*notionapi.ChildPageBlock); ok {
+			medMap[block.ChildPage.Title] = block.ID.String()
+		}
+	}
+	if _, ok := medMap[medicine]; !ok {
+		return nil, fmt.Errorf("%s not found in the Medicine Page", medicine)
+	}
+
+	id := notionapi.BlockID(medMap[medicine])
+	return &id, nil
+}
+
+func getChildDbID(client *notionapi.Client, blockID *notionapi.BlockID) (*notionapi.BlockID, error) {
+	// Get the Blocks from the provided medicine's Page
+	medicinePage, err := client.Block.GetChildren(context.Background(), *blockID,
+		&notionapi.Pagination{PageSize: 100})
+	if err != nil {
+		log.Println("Error Calling GetChildren")
+		return nil, err
+	}
+
+	// Get the Database ID
+	for _, block := range medicinePage.Results {
+		if block, ok := block.(*notionapi.ChildDatabaseBlock); ok {
+			return &block.ID, nil
+		}
+	}
+	return nil, fmt.Errorf("No DB found on page")
+}
+
+func getDose(client *notionapi.Client, childDbID notionapi.BlockID) (int, error) {
+	// Query DB to get the row count to inc the Dose
+	query := notionapi.DatabaseQueryRequest{PageSize: 100}
+	var cursor *notionapi.Cursor
+	hasMore := true
+	dose := 1
+
+	for hasMore {
+		if cursor != nil {
+			query.StartCursor = *cursor
+		}
+		queryResult, err := client.Database.Query(context.Background(),
+			notionapi.DatabaseID(childDbID),
+			&query)
+
+		if err != nil {
+			log.Println("Error Making Query to get Count")
+			return -1, err
+		}
+		dose = dose + len(queryResult.Results)
+		cursor = &queryResult.NextCursor
+		hasMore = queryResult.HasMore
+	}
+	return dose, nil
 }
 
 // AppendDigestionEntry adds a digestion entry to a Notion database.
@@ -132,10 +161,13 @@ func AppendDigestionEntry(client *notionapi.Client, dbID string, bristol int, si
 				Color: lookupSizeColor(size),
 			},
 		},
-		"Notes": notionapi.RichTextProperty{
+		"Note": notionapi.RichTextProperty{
 			RichText: []notionapi.RichText{
 				{Text: &notionapi.Text{Content: note}},
 			},
+		},
+		"Chronicle": notionapi.CheckboxProperty{
+			Checkbox: true,
 		},
 	}
 	request := buildPageCreateRequest(dbID, &props)
