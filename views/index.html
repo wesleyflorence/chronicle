@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Chronicle - Login</title>
+		<!-- Include Tailwind CSS via CDN for simplicity -->
+		<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+	</head>
+
+	<body class="bg-gray-200 p-10">
+
+		{{if not .IsLoggedIn}}
+			{{template "partials/login" .}}
+		{{else}}
+			{{template "partials/forms" .}}
+		{{end}}
+
+	</body>
+</html>

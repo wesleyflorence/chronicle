@@ -8,11 +8,14 @@ import (
 
 	jwtware "github.com/gofiber/contrib/jwt"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/template/html/v2"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/joho/godotenv"
 	"github.com/jomei/notionapi"
 	"github.com/wesleyflorence/chronicle/notion"
 )
+
+const admin = "wesley"
 
 func init() {
 	if err := godotenv.Load(); err != nil {
@@ -21,7 +24,10 @@ func init() {
 }
 
 func main() {
-	app := fiber.New()
+	engine := html.New("./views", ".html")
+	app := fiber.New(fiber.Config{
+		Views: engine,
+	})
 	setupRoutes(app)
 	log.Fatal(app.Listen(":3000"))
 }
@@ -39,21 +45,35 @@ func setupRoutes(app *fiber.App) {
 	notionAPIKey := os.Getenv("NOTION_API_KEY")
 	digestionDbID := os.Getenv("DIGESTION_DB")
 	medicinePageID := os.Getenv("MEDICINE_PAGE")
+	users := setupUsers()
 	client := notionapi.NewClient(notionapi.Token(notionAPIKey))
 
-	app.Static("/", "./public")
-	app.Post("/api/v1/login", handleLogin())
 	app.Use(jwtware.New(jwtware.Config{
-		SigningKey: jwtware.SigningKey{Key: []byte("secret")},
+		SigningKey:  jwtware.SigningKey{Key: []byte("secret")},
+		TokenLookup: "cookie:authToken",
+		ErrorHandler: func(c *fiber.Ctx, err error) error {
+			return c.Next() // Pass to next handler if JWT fails, instead of erroring out.
+		},
 	}))
-	app.Get("/api/v1/test", func(c *fiber.Ctx) error {
-		return c.SendString("Hello World")
+
+	app.Get("/", func(c *fiber.Ctx) error {
+		user := c.Locals("user") // jwtware sets this if JWT is valid.
+		isLoggedIn := user != nil
+		return c.Render("index", fiber.Map{
+			"Title":      "Hello, World!",
+			"IsLoggedIn": isLoggedIn,
+		})
 	})
+	app.Get("/logout", func(c *fiber.Ctx) error {
+		c.ClearCookie("authToken") // Clear the authToken cookie
+		return c.Redirect("/")     // Optionally redirect to homepage or login page
+	})
+	app.Post("/api/v1/login", handleLogin(users))
 	app.Post("/api/v1/dig", handleDigestionEntry(client, digestionDbID))
 	app.Post("/api/v1/med", handleMedicineEntry(client, medicinePageID))
 }
 
-func handleLogin() fiber.Handler {
+func handleLogin(users map[string]string) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		type Payload struct {
 			Password string
@@ -64,7 +84,7 @@ func handleLogin() fiber.Handler {
 			return err
 		}
 
-		if payload.Password != "test" {
+		if payload.Password != users[admin] {
 			return c.SendStatus(fiber.StatusUnauthorized)
 		}
 
@@ -84,6 +104,14 @@ func handleLogin() fiber.Handler {
 			return c.SendStatus(fiber.StatusInternalServerError)
 		}
 
+		c.Cookie(&fiber.Cookie{
+			Name:     "authToken",
+			Value:    t,
+			Expires:  time.Now().Add(72 * time.Hour),
+			HTTPOnly: true,  // This means the cookie is not accessible via JavaScript
+			Secure:   true,  // Use this if your app is served over HTTPS
+			SameSite: "Lax", // CSRF protection. You can also consider "Strict" based on your needs.
+		})
 		return c.JSON(fiber.Map{"token": t, "success": true})
 	}
 }

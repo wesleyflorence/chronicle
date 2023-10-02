@@ -1,0 +1,170 @@
+<!-- Digestion Form -->
+<form id="digestionForm" class="bg-white p-6 rounded shadow-md mb-6">
+	<h2 class="text-xl mb-4">Digestion</h2>
+
+	<!-- Bristol -->
+	<fieldset class="mb-4">
+		<legend class="block mb-2">Bristol</legend>
+		<div class="space-y-2">
+			<div class="flex items-center">
+				<input type="radio" name="bristol" value=1 id="bristol1" class="mr-2">
+				<label for="bristol1">1</label>
+			</div>
+			<div class="flex items-center">
+				<input type="radio" name="bristol" value=2 id="bristol2" class="mr-2">
+				<label for="bristol2">2</label>
+			</div>
+			<div class="flex items-center">
+				<input type="radio" name="bristol" value=3 id="bristol3" class="mr-2">
+				<label for="bristol3">3</label>
+			</div>
+			<div class="flex items-center">
+				<input type="radio" name="bristol" value=4 id="bristol4" class="mr-2">
+				<label for="bristol4">4</label>
+			</div>
+			<div class="flex items-center">
+				<input type="radio" name="bristol" value=5 id="bristol5" class="mr-2">
+				<label for="bristol5">5</label>
+			</div>
+			<div class="flex items-center">
+				<input type="radio" name="bristol" value=6 id="bristol6" class="mr-2">
+				<label for="bristol6">6</label>
+			</div>
+			<div class="flex items-center">
+				<input type="radio" name="bristol" value=7 id="bristol7" class="mr-2">
+				<label for="bristol7">7</label>
+			</div>
+		</div>
+	</fieldset>
+
+	<!-- Size -->
+	<fieldset class="mb-4">
+		<legend class="block mb-2">Size</legend>
+		<select name="size" class="border rounded p-2">
+			<option value="Tiny">Tiny</option>
+			<option value="Small">Small</option>
+			<option value="Medium">Medium</option>
+			<option value="Large">Large</option>
+		</select>
+	</fieldset>
+
+	<!-- Notes -->
+	<div class="mb-4">
+		<label for="notes1" class="block mb-2">Notes</label>
+		<textarea name="notes" id="notes1" class="w-full border rounded p-2"></textarea>
+	</div>
+
+	<button type="submit" class="bg-blue-500 text-white rounded p-2 hover:bg-blue-600">Submit</button>
+<div id="digSuccessMessage" style="display:none; color:green;">
+    Data submitted successfully!
+</div>
+</form>
+
+
+<!-- Medicine Form -->
+<form id="medicineForm" class="bg-white p-6 rounded shadow-md">
+	<h2 class="text-xl mb-4">Medicine</h2>
+
+	<!-- Medicine Choice -->
+	<fieldset class="mb-4">
+		<legend class="block mb-2">Choice</legend>
+		<select name="medicineChoice" class="border rounded p-2">
+			<option value="Ondansetron">Ondansetron</option>
+			<option value="Dexamethason">Dexamethason</option>
+		</select>
+	</fieldset>
+
+	<!-- Notes -->
+	<div class="mb-4">
+		<label for="notes2" class="block mb-2">Notes</label>
+		<textarea name="notes" id="notes2" class="w-full border rounded p-2"></textarea>
+	</div>
+
+	<button type="submit" class="bg-green-500 text-white rounded p-2 hover:bg-green-600">Submit</button>
+<div id="medSuccessMessage" style="display:none; color:green;">
+    Data submitted successfully!
+</div>
+</form>
+
+<!-- Logout Button -->
+<button id="logoutBtn" class="bg-red-500 text-white rounded p-2 hover:bg-red-600 mt-4">Logout</button>
+
+<script>
+// Handle Digestion Form Submission
+document.getElementById('digestionForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const formData = {
+        Bristol: parseInt(e.target.elements.bristol.value, 10),
+        Size: e.target.elements.size.value,
+        Note: e.target.elements.notes.value
+    };
+
+    fetch('/api/v1/dig', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+    })
+    .then(response => {
+        if (response.ok) {
+            // Display the success message
+            document.getElementById('digSuccessMessage').style.display = 'block';
+            setTimeout(() => {
+                // Optionally hide the success message after 5 seconds
+                document.getElementById('digSuccessMessage').style.display = 'none';
+            }, 5000);
+            return response.json();
+        } else {
+            alert('Submission failed. Please try again.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+});
+
+// Handle Medicine Form Submission
+document.getElementById('medicineForm').addEventListener('submit', function(e) {
+	e.preventDefault();
+
+	const formData = {
+		Medicine: e.target.elements.medicineChoice.value,
+		Notes: e.target.elements.notes.value
+	};
+
+	fetch('/api/v1/med', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify(formData),
+		})
+    .then(response => {
+        if (response.ok) {
+            // Display the success message
+            document.getElementById('medSuccessMessage').style.display = 'block';
+            setTimeout(() => {
+                // Optionally hide the success message after 5 seconds
+                document.getElementById('medSuccessMessage').style.display = 'none';
+            }, 5000);
+            return response.json();
+        } else {
+            alert('Submission failed. Please try again.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+});
+
+// Handle Logout Button
+document.getElementById('logoutBtn').addEventListener('click', function() {
+	// Make a request to the logout endpoint to clear the cookie server-side
+	fetch('/logout').then(() => {
+		window.location.href = '/'; // Optionally redirect to homepage or login page
+	});
+});
+</script>
+
