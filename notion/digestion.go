@@ -69,7 +69,10 @@ func lookupSizeColor(size string) notionapi.Color {
 		return notionapi.ColorRed
 	case "Medium":
 		return notionapi.ColorOrange
-	default:
+	case "Large":
 		return notionapi.ColorYellow
+	default:
+		return notionapi.ColorBlue
+
 	}
 }
