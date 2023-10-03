@@ -11,18 +11,18 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html/v2"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/joho/godotenv"
 	"github.com/jomei/notionapi"
 	"github.com/wesleyflorence/chronicle/notion"
 )
 
 const admin = "wesley"
 
-func init() {
-	if err := godotenv.Load(); err != nil {
-		log.Fatalln("Could not load env vars")
-	}
-}
+// this breaks when deploying
+// func init() {
+// 	if err := godotenv.Load(); err != nil {
+// 		log.Fatalln("Could not load env vars")
+// 	}
+// }
 
 func main() {
 	engine := html.New("./views", ".html")
@@ -30,7 +30,7 @@ func main() {
 		Views: engine,
 	})
 	setupRoutes(app)
-	log.Fatal(app.Listen(":3000"))
+	log.Fatal(app.Listen(":8080"))
 }
 
 func setupUsers() map[string]string {
