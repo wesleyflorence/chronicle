@@ -3,12 +3,25 @@
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>{{.Title}}</title>
+		<title>{{.Title}}</title>
 		<!-- Include Tailwind CSS via CDN for simplicity -->
 		<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <script src="https://unpkg.com/htmx.org"></script>
+		<script src="https://unpkg.com/htmx.org"></script>
+		<link rel="manifest" href="/manifest.json">
+		<link rel="apple-touch-icon" href="/public/icon-192x192.png">
+		<link rel="apple-touch-icon" sizes="512x512" href="/public/icon-512x512.png">
+		<script>
+  			if ('serviceWorker' in navigator) {
+			  window.addEventListener('load', () => {
+				  navigator.serviceWorker.register('/serviceworker.js').then(registration => {
+					  console.log('Service Worker registered with scope:', registration.scope);
+					  }, err => {
+						  console.error('Service Worker registration failed:', err);
+				  });
+			  });
+		  }
+		</script>
 	</head>
-
 	<body class="bg-gray-200 p-10">
 
 		{{if not .IsLoggedIn}}

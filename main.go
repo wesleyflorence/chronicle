@@ -11,18 +11,18 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html/v2"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/joho/godotenv"
 	"github.com/jomei/notionapi"
 	"github.com/wesleyflorence/chronicle/notion"
 )
 
 const admin = "wesley"
 
-// this breaks when deploying
-// func init() {
-// 	if err := godotenv.Load(); err != nil {
-// 		log.Fatalln("Could not load env vars")
-// 	}
-// }
+func init() {
+	if err := godotenv.Load(); err != nil {
+		log.Println("No .env file found")
+	}
+}
 
 func main() {
 	engine := html.New("./views", ".html")
@@ -50,6 +50,12 @@ func setupRoutes(app *fiber.App) {
 	client := notionapi.NewClient(notionapi.Token(notionAPIKey))
 
 	app.Static("/public", "./public")
+	app.Get("/serviceworker.js", func(c *fiber.Ctx) error {
+		return c.SendFile("./public/serviceworker.js")
+	})
+	app.Get("/manifest.json", func(c *fiber.Ctx) error {
+		return c.SendFile("./public/manifest.json")
+	})
 	app.Use(jwtware.New(jwtware.Config{
 		SigningKey:  jwtware.SigningKey{Key: []byte("secret")},
 		TokenLookup: "cookie:authToken",
