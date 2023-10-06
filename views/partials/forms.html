@@ -1,67 +1,64 @@
-<div class="bg-stone-900 p-4 border-b border-stone-700">
-    <div class="flex justify-end">
-        <!-- Logout Button in Navigation -->
-        <button hx-get="/logout" hx-trigger="click" class="bg-stone-800 border border-stone-700 text-stone-300 rounded p-2 hover:bg-stone-700 hover:text-emerald-500">Logout</button>
-    </div>
+<div class="bg-stone-900 p-2 border-b border-stone-700">
+  <div class="flex justify-end">
+    <!-- Logout Button in Navigation -->
+    <button hx-get="/logout" hx-trigger="click" class="bg-stone-800 border border-stone-700 text-stone-300 rounded p-1 hover:bg-stone-950 hover:text-amber-500">Logout</button>
+  </div>
 </div>
 
 <!-- Digestion Form -->
 <div class="mt-6 p-6">
   <form hx-post="/api/v1/dig" hx-trigger="submit" hx-swap="beforeend" hx-timeout="60000" class="bg-stone-900 p-6 rounded shadow-md text-stone-100 mb-6">
-    <h2 class="text-xl mb-4 text-emerald-400">Digestion</h2>
+    <h2 class="text-xl mb-4 text-stone-400">Digestion</h2>
 
     <!-- Bristol -->
     <fieldset class="mb-4">
-      <legend class="block mb-2 text-emerald-400">Bristol</legend>
+      <legend class="block mb-2 text-stone-400">Bristol</legend>
       <ul class="flex space-x-3">
         <!-- Using the pattern from the earlier medicine form for consistency -->
-        <li><input type="radio" id="bristol1" name="bristol" value="1" class="hidden peer"><label for="bristol1" class="inline-flex items-center justify-between p-2 text-stone-300 bg-stone-800 border border-stone-700 rounded-full cursor-pointer hover:bg-stone-700 peer-checked:border-emerald-500 peer-checked:text-emerald-500">1</label></li>
-        <li><input type="radio" id="bristol2" name="bristol" value="2" class="hidden peer"><label for="bristol2" class="inline-flex items-center justify-between p-2 text-stone-300 bg-stone-800 border border-stone-700 rounded-full cursor-pointer hover:bg-stone-700 peer-checked:border-emerald-500 peer-checked:text-emerald-500">2</label></li>
-        <li><input type="radio" id="bristol3" name="bristol" value="3" class="hidden peer"><label for="bristol3" class="inline-flex items-center justify-between p-2 text-stone-300 bg-stone-800 border border-stone-700 rounded-full cursor-pointer hover:bg-stone-700 peer-checked:border-emerald-500 peer-checked:text-emerald-500">3</label></li>
-        <li><input type="radio" id="bristol4" name="bristol" value="4" class="hidden peer"><label for="bristol4" class="inline-flex items-center justify-between p-2 text-stone-300 bg-stone-800 border border-stone-700 rounded-full cursor-pointer hover:bg-stone-700 peer-checked:border-emerald-500 peer-checked:text-emerald-500">4</label></li>
-        <li><input type="radio" id="bristol5" name="bristol" value="5" class="hidden peer"><label for="bristol5" class="inline-flex items-center justify-between p-2 text-stone-300 bg-stone-800 border border-stone-700 rounded-full cursor-pointer hover:bg-stone-700 peer-checked:border-emerald-500 peer-checked:text-emerald-500">5</label></li>
-        <li><input type="radio" id="bristol6" name="bristol" value="6" class="hidden peer"><label for="bristol6" class="inline-flex items-center justify-between p-2 text-stone-300 bg-stone-800 border border-stone-700 rounded-full cursor-pointer hover:bg-stone-700 peer-checked:border-emerald-500 peer-checked:text-emerald-500">6</label></li>
-        <li><input type="radio" id="bristol7" name="bristol" value="7" class="hidden peer"><label for="bristol7" class="inline-flex items-center justify-between p-2 text-stone-300 bg-stone-800 border border-stone-700 rounded-full cursor-pointer hover:bg-stone-700 peer-checked:border-emerald-500 peer-checked:text-emerald-500">7</label></li>
+        <li><input type="radio" id="bristol1" name="bristol" value="1" class="hidden peer"><label for="bristol1" class="inline-flex items-center justify-between p-2 text-stone-300 bg-stone-800 border border-stone-700 rounded-full cursor-pointer hover:bg-stone-700 peer-checked:border-amber-500 peer-checked:text-amber-500">1</label></li>
+        <li><input type="radio" id="bristol2" name="bristol" value="2" class="hidden peer"><label for="bristol2" class="inline-flex items-center justify-between p-2 text-stone-300 bg-stone-800 border border-stone-700 rounded-full cursor-pointer hover:bg-stone-700 peer-checked:border-amber-500 peer-checked:text-amber-500">2</label></li>
+        <li><input type="radio" id="bristol3" name="bristol" value="3" class="hidden peer"><label for="bristol3" class="inline-flex items-center justify-between p-2 text-stone-300 bg-stone-800 border border-stone-700 rounded-full cursor-pointer hover:bg-stone-700 peer-checked:border-amber-500 peer-checked:text-amber-500">3</label></li>
+        <li><input type="radio" id="bristol4" name="bristol" value="4" class="hidden peer"><label for="bristol4" class="inline-flex items-center justify-between p-2 text-stone-300 bg-stone-800 border border-stone-700 rounded-full cursor-pointer hover:bg-stone-700 peer-checked:border-amber-500 peer-checked:text-amber-500">4</label></li>
+        <li><input type="radio" id="bristol5" name="bristol" value="5" class="hidden peer"><label for="bristol5" class="inline-flex items-center justify-between p-2 text-stone-300 bg-stone-800 border border-stone-700 rounded-full cursor-pointer hover:bg-stone-700 peer-checked:border-amber-500 peer-checked:text-amber-500">5</label></li>
+        <li><input type="radio" id="bristol6" name="bristol" value="6" class="hidden peer"><label for="bristol6" class="inline-flex items-center justify-between p-2 text-stone-300 bg-stone-800 border border-stone-700 rounded-full cursor-pointer hover:bg-stone-700 peer-checked:border-amber-500 peer-checked:text-amber-500">6</label></li>
+        <li><input type="radio" id="bristol7" name="bristol" value="7" class="hidden peer"><label for="bristol7" class="inline-flex items-center justify-between p-2 text-stone-300 bg-stone-800 border border-stone-700 rounded-full cursor-pointer hover:bg-stone-700 peer-checked:border-amber-500 peer-checked:text-amber-500">7</label></li>
       </ul>
     </fieldset>
 
 
-    <!-- Size -->
-    <fieldset class="mb-4">
-      <legend class="block mb-2 text-emerald-400">Size</legend>
-      <select name="size" class="border border-stone-700 bg-stone-800 rounded p-2 text-stone-100 placeholder-stone-400">
-        <option value="Tiny">Tiny</option>
-        <option value="Small">Small</option>
-        <option value="Medium">Medium</option>
-        <option value="Large">Large</option>
-      </select>
-    </fieldset>
+    <div class="flex space-x-4 mb-4">
+      <!-- Size -->
+      <fieldset class="w-32">
+        <select name="size" class="w-full border border-stone-700 bg-stone-800 rounded p-2 text-stone-100 placeholder-stone-400">
+          <option value="Tiny">Tiny</option>
+          <option value="Small">Small</option>
+          <option value="Medium">Medium</option>
+          <option value="Large">Large</option>
+        </select>
+      </fieldset>
 
-    <!-- Notes -->
-    <div class="mb-4">
-      <label for="note1" class="block mb-2 text-emerald-400">Note</label>
-      <input type="text" name="Note" id="note1" class="w-full border border-stone-700 bg-stone-800 rounded p-2 text-stone-100 placeholder-stone-400">
+      <!-- Note -->
+      <div class="flex-grow">
+        <input type="text" name="Note" id="note2" placeholder="Note" class="w-full border border-stone-700 bg-stone-800 rounded p-2 text-stone-100 placeholder-stone-400">
+      </div>
     </div>
-
     <div class="flex items-center">
-      <button type="submit" hx-indicator="#dig-indicator" class="bg-emerald-600 text-stone-900 rounded p-2 hover:bg-emerald-700 focus:ring focus:ring-emerald-300 focus:ring-opacity-50">Submit</button>
+      <button type="submit" hx-indicator="#dig-indicator" class="bg-amber-600 text-stone-900 rounded p-2 hover:bg-amber-700 focus:ring focus:ring-amber-300">Submit</button>
       <img id="dig-indicator" class="htmx-indicator ml-2" src="/public/rings.svg">    
     </div>
   </form>
 
   <!-- Medicine Form -->
   <form hx-post="/api/v1/med" hx-trigger="submit" hx-swap="beforeend" hx-timeout="10000" class="bg-stone-900 p-6 rounded shadow-md text-stone-100">
-    <h2 class="text-xl mb-4 text-emerald-400">Medicine</h2>
+    <h2 class="text-xl mb-4 text-stone-400">Medicine</h2>
 
     <!-- Medicine Choice -->
-    <fieldset class="mb-4 space-x-2">
-      <legend class="block mb-2 text-emerald-400">Choice</legend>
-
+    <fieldset class="mb-4">
       <ul class="w-full space-y-2">
         <li>
           <!-- Ondansetron Radio Input -->
           <input type="radio" id="ondansetron" name="Medicine" value="Ondansetron" class="hidden peer" required>
-          <label for="ondansetron" class="inline-flex items-center justify-between w-full p-4 text-stone-300 bg-stone-800 border border-stone-700 rounded-lg cursor-pointer hover:bg-stone-700 peer-checked:border-emerald-500 peer-checked:text-emerald-500">
+          <label for="ondansetron" class="inline-flex items-center justify-between w-full p-2 text-stone-300 bg-stone-800 border border-stone-700 rounded-lg cursor-pointer hover:bg-stone-700 peer-checked:border-amber-500 peer-checked:text-amber-500">
             <span>Ondansetron</span>
           </label>
         </li>
@@ -69,21 +66,20 @@
         <li>
           <!-- Dexamethason Radio Input -->
           <input type="radio" id="dexamethason" name="Medicine" value="Dexamethason" class="hidden peer">
-          <label for="dexamethason" class="inline-flex items-center justify-between w-full p-4 text-stone-300 bg-stone-800 border border-stone-700 rounded-lg cursor-pointer hover:bg-stone-700 peer-checked:border-emerald-500 peer-checked:text-emerald-500">
+          <label for="dexamethason" class="inline-flex items-center justify-between w-full p-2 text-stone-300 bg-stone-800 border border-stone-700 rounded-lg cursor-pointer hover:bg-stone-700 peer-checked:border-amber-500 peer-checked:text-amber-500">
             <span>Dexamethason</span>
           </label>
         </li>
       </ul>
     </fieldset>
 
-    <!-- Notes -->
+    <!-- Note -->
     <div class="mb-4">
-      <label for="note2" class="block mb-2 text-emerald-400">Note</label>
-      <input type="text" name="Note" id="note2" class="w-full border border-stone-700 bg-stone-800 rounded p-2 text-stone-100 placeholder-stone-400">
+      <input type="text" name="Note" id="note2" placeholder="Note" class="w-full border border-stone-700 bg-stone-800 rounded p-2 text-stone-100 placeholder-stone-400">
     </div>
 
     <div class="flex items-center">
-      <button type="submit" hx-indicator="#med-indicator" class="bg-emerald-600 text-stone-900 rounded p-2 hover:bg-emerald-700 focus:ring focus:ring-emerald-300 focus:ring-opacity-50">Submit</button>
+      <button type="submit" hx-indicator="#med-indicator" class="bg-amber-600 text-stone-900 rounded p-2 hover:bg-amber-700 focus:ring focus:ring-amber-300">Submit</button>
       <img id="med-indicator" class="htmx-indicator ml-2" src="/public/rings.svg">    
     </div>
   </form>

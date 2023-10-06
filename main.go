@@ -159,7 +159,7 @@ func handleMedicineEntry(client *notionapi.Client, medicinePageID string) fiber.
 			return err
 		}
 
-		return c.SendString(`<div id="medSuccessMessage" style="color:green;">Data submitted successfully!</div>`)
+		return c.SendString(`<div id="medSuccessMessage" style="color:text-stone-300;">Data submitted successfully!</div>`)
 		//return c.JSON(page)
 	}
 }
@@ -183,7 +183,7 @@ func handleDigestionEntry(client *notionapi.Client, digestionDbID string) fiber.
 		}
 
 		c.Set("Content-Type", "text/html")
-		return c.SendString(`<div style="color:green;">Data submitted successfully!</div>`)
+		return c.SendString(`<div style="color:text-stone-300;">Data submitted successfully!</div>`)
 		//return c.JSON(page)
 	}
 }
