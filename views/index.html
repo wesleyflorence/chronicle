@@ -21,8 +21,20 @@
 			  });
 		  }
 		</script>
+    <style>
+      body {
+          background: linear-gradient(115.58deg, #0C0A09 0%, #2A2624 100.22%), 
+                      radial-gradient(92.72% 100% at 50% 0%, #2C2725 0%, #0A0807 100%), 
+                      radial-gradient(92.72% 100% at 50% 0%, #201C1A 0%, #120F0E 100%), 
+                      radial-gradient(109.21% 213.32% at 100% 0%, #1A1614 0%, #151211 100%), 
+                      linear-gradient(127.43deg, #1E1B19 0%, #0E0C0B 100%);
+          background-blend-mode: lighten, overlay, lighten, screen, normal;
+          min-height: 100vh;
+          margin: 0;
+      }
+    </style>
 	</head>
-	<body class="bg-stone-800 p-10">
+	<body>
 
 		{{if not .IsLoggedIn}}
 			{{template "partials/login" .}}
