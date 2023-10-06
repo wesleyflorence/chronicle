@@ -1,17 +1,33 @@
 name: Fly Deploy
+
 on:
   push:
     branches:
       - main
+
 jobs:
   deploy:
     name: Deploy app
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      
+      # Download and setup standalone TailwindCSS CLI
+      - name: Set up TailwindCSS Standalone CLI
+        run: |
+          curl -sLO https://github.com/tailwindlabs/tailwindcss/releases/download/v3.3.3/tailwindcss-linux-x64
+          chmod +x tailwindcss-linux-x64
+          mv tailwindcss-linux-x64 tailwindcss
+
+      # Build the CSS using the standalone TailwindCSS CLI
+      - name: Build CSS
+        run: ./tailwindcss -i assets/input.css -o public/output.css --minify
+      
       - uses: superfly/flyctl-actions/setup-flyctl@master
+      
       - name: Inject commit hash into serviceworker
         run: sed -i "s/<PLACEHOLDER>/${{ github.sha }}/g" public/serviceworker.js
+        
       - run: flyctl deploy --remote-only
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}

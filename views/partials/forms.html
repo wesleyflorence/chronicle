@@ -62,29 +62,50 @@
 	</form>
 
 
-	<!-- Medicine Form -->
-	<form hx-post="/api/v1/med" hx-trigger="submit" hx-swap="beforeend" hx-timeout="10000" class="bg-white p-6 rounded shadow-md">
-		<h2 class="text-xl mb-4">Medicine</h2>
+<!-- Medicine Form -->
+<form hx-post="/api/v1/med" hx-trigger="submit" hx-swap="beforeend" hx-timeout="10000" class="bg-gray-800 p-6 rounded shadow-md text-gray-300">
+    <h2 class="text-xl mb-4 text-white">Medicine</h2>
 
-		<!-- Medicine Choice -->
-		<fieldset class="mb-4">
-			<legend class="block mb-2">Choice</legend>
-			<select name="Medicine" class="border rounded p-2">
-				<option value="Ondansetron">Ondansetron</option>
-				<option value="Dexamethason">Dexamethason</option>
-			</select>
-		</fieldset>
+    <!-- Medicine Choice -->
+    <fieldset class="mb-4 space-x-2">
+        <legend class="block mb-2 text-white">Choice</legend>
+        
+        <ul class="w-full space-y-2">
+            <li>
+                <!-- Ondansetron Radio Input -->
+                <input type="radio" id="ondansetron" name="Medicine" value="Ondansetron" class="hidden peer" required>
+                <label for="ondansetron" class="inline-flex items-center justify-between w-full p-4 text-gray-500 bg-gray-700 border border-gray-600 rounded-lg cursor-pointer hover:text-gray-300 hover:bg-gray-600 peer-checked:border-blue-600 peer-checked:text-blue-600">
+                    <span>Ondansetron</span>
+                    <svg class="w-5 h-5 ml-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+                    </svg>
+                </label>
+            </li>
+            
+            <li>
+                <!-- Dexamethason Radio Input -->
+                <input type="radio" id="dexamethason" name="Medicine" value="Dexamethason" class="hidden peer">
+                <label for="dexamethason" class="inline-flex items-center justify-between w-full p-4 text-gray-500 bg-gray-700 border border-gray-600 rounded-lg cursor-pointer hover:text-gray-300 hover:bg-gray-600 peer-checked:border-blue-600 peer-checked:text-blue-600">
+                    <span>Dexamethason</span>
+                    <svg class="w-5 h-5 ml-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+                    </svg>
+                </label>
+            </li>
+        </ul>
+    </fieldset>
 
-		<!-- Notes -->
-		<div class="mb-4">
-			<label for="note2" class="block mb-2">Note</label>
-			<textarea name="Note" id="note2" class="w-full border rounded p-2"></textarea>
-		</div>
-		<div class="flex items-center">
-			<button type="submit" hx-indicator="#med-indicator" class="bg-blue-500 text-white rounded p-2 hover:bg-blue-600">Submit</button>
-			<img id="med-indicator" class="htmx-indicator" src="/public/rings.svg">	
-		</div>
-	</form>
+    <!-- Notes -->
+    <div class="mb-4">
+        <label for="note2" class="block mb-2">Note</label>
+        <input type="text" name="Note" id="note2" class="w-full border border-gray-600 bg-gray-700 rounded p-2 text-gray-300 placeholder-gray-500">
+    </div>
+
+    <div class="flex items-center">
+        <button type="submit" hx-indicator="#med-indicator" class="bg-blue-500 text-white rounded p-2 hover:bg-blue-600 focus:ring focus:ring-blue-200 focus:ring-opacity-50">Submit</button>
+        <img id="med-indicator" class="htmx-indicator ml-2" src="/public/rings.svg">    
+    </div>
+</form>
 
 	<!-- Logout Button -->
 	<button hx-get="/logout" hx-trigger="click" class="bg-red-500 text-white rounded p-2 hover:bg-red-600 mt-4">Logout</button>
