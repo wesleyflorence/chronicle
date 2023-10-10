@@ -155,13 +155,18 @@ func handleMedicineEntry(client *notionapi.Client, medicinePageID string) fiber.
 			return err
 		}
 
-		_, err := notion.AppendMedicineEntry(client, medicinePageID, payload.Medicine, payload.Note)
+		page, err := notion.AppendMedicineEntry(client, medicinePageID, payload.Medicine, payload.Note)
 		if err != nil {
 			return err
 		}
-
-		return c.SendString(`<div id="medSuccessMessage" style="color:text-stone-300;">Data submitted successfully!</div>`)
-		//return c.JSON(page)
+		loc, _ := time.LoadLocation("Local")
+		created := page.CreatedTime.In(loc).Format("2006-01-02 03:04PM")
+		doseProp, ok := page.Properties["Dose"].(*notionapi.TitleProperty)
+		if !ok {
+			return fmt.Errorf("Error unwrapping Dose returned from page")
+		}
+		dose := doseProp.Title[0].Text.Content
+		return c.SendString(fmt.Sprintf(`<div id="med-response-target" class="text-xs text-stone-600" hx-ext="remove-me"><div remove-me="5s">%s dose %s :: %s</div></div>`, payload.Medicine, dose, created))
 	}
 }
 
@@ -178,13 +183,14 @@ func handleDigestionEntry(client *notionapi.Client, digestionDbID string) fiber.
 			return err
 		}
 
-		_, err := notion.AppendDigestionEntry(client, digestionDbID, payload.Bristol, payload.Size, payload.Note)
+		page, err := notion.AppendDigestionEntry(client, digestionDbID, payload.Bristol, payload.Size, payload.Note)
 		if err != nil {
 			return err
 		}
 
+		loc, _ := time.LoadLocation("Local")
+		created := page.CreatedTime.In(loc).Format("2006-01-02 03:04PM")
 		c.Set("Content-Type", "text/html")
-		return c.SendString(`<div style="color:text-stone-300;">Data submitted successfully!</div>`)
-		//return c.JSON(page)
+		return c.SendString(fmt.Sprintf(`<div id="dig-response-target" class="text-xs text-stone-600" hx-ext="remove-me"><div remove-me="5s">New Entry :: %s</div></div>`, created))
 	}
 }
