@@ -187,7 +187,3 @@ func handleDigestionEntry(client *notionapi.Client, digestionDbID string) fiber.
 		//return c.JSON(page)
 	}
 }
-
-func hello(c *fiber.Ctx) error {
-	return c.SendString("Chronicle Home")
-}

@@ -1,10 +1,11 @@
 <div class="p-16">
-<div class="bg-stone-800 p-8 rounded-lg shadow-md w-76">
-  <h2 class="text-2xl font-bold mb-4 text-center text-stone-100">Chronicle 👋</h2>
-  <form method="post" hx-post="/api/v1/login" hx-trigger="submit" hx-swap="beforeend" class="flex flex-col space-y-4">
-    <input type="password" name="Password" placeholder="Enter your password" required 
-      class="p-2 border border-stone-700 bg-stone-800 rounded-md text-stone-100 placeholder-stone-400 focus:outline-none focus:border-amber-500">
-    <button type="submit" class="p-2 bg-amber-500 text-stone-800 rounded-md hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-600 focus:ring-opacity-50">Login</button>
-  </form>
-</div>
+  <div class="w-76 rounded-lg bg-stone-800 p-8 shadow-md">
+    <h2 class="mb-4 text-center text-2xl font-bold text-stone-100">Chronicle 👋</h2>
+    <form method="post" hx-post="/api/v1/login" hx-trigger="submit" hx-swap="beforeend" class="flex flex-col space-y-4">
+      <input type="password" name="Password" placeholder="Enter your password" required
+        class="rounded-md border border-stone-700 bg-stone-800 p-2 text-stone-100 placeholder-stone-400 focus:border-amber-500 focus:outline-none">
+      <button type="submit"
+        class="rounded-md bg-amber-500 p-2 text-stone-800 hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-600 focus:ring-opacity-50">Login</button>
+    </form>
+  </div>
 </div>
