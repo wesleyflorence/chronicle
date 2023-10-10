@@ -91,8 +91,9 @@ func handleHome(c *fiber.Ctx) error {
 		title = "Chronicle - Login"
 	}
 	return c.Render("index", fiber.Map{
-		"Title":      title,
-		"IsLoggedIn": isLoggedIn,
+		"Title":        title,
+		"IsLoggedIn":   isLoggedIn,
+		"BristolSlice": []int{1, 2, 3, 4, 5, 6, 7},
 	})
 }
 
