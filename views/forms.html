@@ -1,3 +1,4 @@
+{{define "forms"}}
 <!-- Digestion Form -->
 <div class="mt-6 p-6">
   <form hx-post="/api/v1/dig" hx-trigger="submit" hx-target="#dig-response-target" hx-swap="outerHTML" hx-timeout="60000"
@@ -92,3 +93,4 @@
   <button hx-get="/logout" hx-trigger="click"
     class="rounded bg-stone-800 p-1 text-stone-400 hover:bg-stone-700">Logout</button>
 </div>
+{{end}}

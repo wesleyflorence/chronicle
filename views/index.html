@@ -37,9 +37,9 @@
 	<body>
 
 		{{if not .IsLoggedIn}}
-			{{template "partials/login" .}}
+			{{template "login" .}}
 		{{else}}
-			{{template "partials/forms" .}}
+			{{template "forms" .}}
 		{{end}}
 
 	</body>

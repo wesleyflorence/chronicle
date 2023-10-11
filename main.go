@@ -2,14 +2,19 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"html/template"
 	"log"
+	"net/http"
 	"os"
+	"path/filepath"
+	"strings"
 	"time"
 
-	jwtware "github.com/gofiber/contrib/jwt"
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/template/html/v2"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/jwtauth"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/joho/godotenv"
 	"github.com/jomei/notionapi"
@@ -18,6 +23,13 @@ import (
 
 const admin = "wesley"
 
+var tokenAuth = jwtauth.New("HS256", []byte("secret"), nil)
+var tmpl *template.Template
+
+type Payload struct {
+	Password string
+}
+
 func init() {
 	if err := godotenv.Load(); err != nil {
 		log.Println("No .env file found")
@@ -25,12 +37,28 @@ func init() {
 }
 
 func main() {
-	engine := html.New("./views", ".html")
-	app := fiber.New(fiber.Config{
-		Views: engine,
-	})
-	setupRoutes(app)
-	log.Fatal(app.Listen(":8080"))
+	r := chi.NewRouter()
+	r.Use(middleware.RequestID)
+	r.Use(middleware.RealIP)
+	r.Use(middleware.Logger)
+	r.Use(middleware.Recoverer)
+
+	// Parse templates
+	var err error
+	tmpl, err = parseTemplates("views")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	setupRoutes(r)
+
+	log.Fatal(http.ListenAndServe(":8080", r))
+}
+
+// parseTemplates will parse all templates in the specified folder and return a *template.Template
+func parseTemplates(folder string) (*template.Template, error) {
+	// Create a new template and parse the template definitions in the specified folder
+	return template.ParseGlob(filepath.Join(folder, "*.html")) // assuming your templates have a .html extension
 }
 
 func setupUsers() map[string]string {
@@ -42,155 +70,208 @@ func setupUsers() map[string]string {
 	return users
 }
 
-func setupRoutes(app *fiber.App) {
+func setupRoutes(r *chi.Mux) {
 	notionAPIKey := os.Getenv("NOTION_API_KEY")
 	digestionDbID := os.Getenv("DIGESTION_DB")
 	medicinePageID := os.Getenv("MEDICINE_PAGE")
 	users := setupUsers()
 	client := notionapi.NewClient(notionapi.Token(notionAPIKey))
 
-	app.Static("/public", "./public")
-	app.Get("/serviceworker.js", func(c *fiber.Ctx) error {
-		return c.SendFile("./public/serviceworker.js")
-	})
-	app.Get("/manifest.json", func(c *fiber.Ctx) error {
-		return c.SendFile("./public/manifest.json")
-	})
-	app.Use(jwtware.New(jwtware.Config{
-		SigningKey:  jwtware.SigningKey{Key: []byte("secret")},
-		TokenLookup: "cookie:authToken",
-		ErrorHandler: func(c *fiber.Ctx, err error) error {
-			return c.Next() // Pass to next handler if JWT fails, instead of erroring out.
-		},
-	}))
+	// Serve static files
+	FileServer(r, "/public", http.Dir("./public"))
 
-	app.Get("/", handleHome)
-	app.Get("/logout", func(c *fiber.Ctx) error {
-		c.ClearCookie("authToken") // Clear the authToken cookie
-		c.Set("HX-Redirect", "/")
-		return c.SendString("Logged out")
+	r.Group(func(r chi.Router) {
+		// Public routes
+		r.Get("/", handleHome)
+		r.Post("/api/v1/login", handleLogin(users)) // Pass the users map to the login handler
 	})
-	app.Post("/api/v1/login", handleLogin(users))
-	app.Post("/api/v1/dig", handleDigestionEntry(client, digestionDbID))
-	app.Post("/api/v1/med", handleMedicineEntry(client, medicinePageID))
+
+	// Protected routes
+	r.Group(func(r chi.Router) {
+		// Seek, verify and validate JWT tokens
+		r.Use(jwtauth.Verifier(tokenAuth))
+
+		// Handle valid / invalid tokens. This can be modified
+		// based on the requirements of your application.
+		r.Use(jwtauth.Authenticator)
+
+		r.Get("/logout", func(w http.ResponseWriter, r *http.Request) {
+			// Clear the authToken cookie
+			http.SetCookie(w, &http.Cookie{
+				Name:     "authToken",
+				Value:    "",
+				Path:     "/",
+				Expires:  time.Unix(0, 0),
+				HttpOnly: true,
+			})
+
+			// For the HX-Redirect to work with htmx, you'll likely need to set it as a response header
+			w.Header().Set("HX-Redirect", "/")
+			w.Write([]byte("Logged out"))
+		})
+
+		// Now define the routes that require a valid JWT
+		r.Post("/api/v1/dig", func(w http.ResponseWriter, r *http.Request) {
+			handleDigestionEntry(w, r, client, digestionDbID)
+		})
+
+		r.Post("/api/v1/med", func(w http.ResponseWriter, r *http.Request) {
+			handleMedicineEntry(w, r, client, medicinePageID)
+		})
+	})
 }
-func handleHome(c *fiber.Ctx) error {
-	user := c.Locals("user") // jwtware sets this if JWT is valid.
-	isLoggedIn := user != nil
+
+// FileServer conveniently sets up a http.FileServer handler to serve
+// static files from a http.FileSystem.
+func FileServer(r chi.Router, path string, root http.FileSystem) {
+	if strings.ContainsAny(path, "{}*") {
+		panic("FileServer does not permit URL parameters.")
+	}
+
+	fs := http.StripPrefix(path, http.FileServer(root))
+
+	if path != "/" && path[len(path)-1] != '/' {
+		r.Get(path, http.RedirectHandler(path+"/", 301).ServeHTTP)
+		path += "/"
+	}
+	path += "*"
+
+	r.Get(path, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fs.ServeHTTP(w, r)
+	}))
+}
+
+func handleHome(w http.ResponseWriter, r *http.Request) {
+	cookie, _ := r.Cookie("authToken")
+	if cookie != nil {
+		fmt.Printf("COOKIE : %+v", cookie.Value)
+	}
+
+	// TODO this is broken and I cant log in
+
+	isLoggedIn := false
 	var title string
-	if jwtToken, ok := user.(*jwt.Token); ok {
-		claimsName, ok := jwtToken.Claims.(jwt.MapClaims)
-		if !ok || !jwtToken.Valid {
-			return fmt.Errorf("Unable to parse JWT Token")
-		}
-		name, ok := claimsName["name"]
-		if ok {
-			title = "Chronicle " + name.(string)
-		}
+	if isLoggedIn {
+		title = "Chronicle - " //+ claims["name"].(string)
 	} else {
 		title = "Chronicle - Login"
 	}
-	return c.Render("index", fiber.Map{
+
+	// Create your page data
+	data := map[string]interface{}{
 		"Title":        title,
 		"IsLoggedIn":   isLoggedIn,
 		"BristolSlice": []int{1, 2, 3, 4, 5, 6, 7},
-	})
+	}
+
+	// Render the template with the data
+	err := tmpl.ExecuteTemplate(w, "index.html", data) // assuming your main file is called index.html
+	if err != nil {
+		http.Error(w, "Error rendering template", http.StatusInternalServerError)
+		log.Fatalf(err.Error())
+	}
 }
 
-func handleLogin(users map[string]string) fiber.Handler {
-	return func(c *fiber.Ctx) error {
-		type Payload struct {
-			Password string
-		}
-		var payload Payload
-		if err := c.BodyParser(&payload); err != nil {
-			return err
-		}
-
-		if payload.Password != users[admin] {
-
-			c.Set("Content-Type", "text/html")
-			return c.SendString(`<div class="text-red-500">Login failed. Please try again.</div>`)
+func handleLogin(users map[string]string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// Parse the form data
+		err := r.ParseForm()
+		if err != nil {
+			http.Error(w, "Error parsing form", http.StatusBadRequest)
+			return
 		}
 
-		// Create the Claims
-		claims := jwt.MapClaims{
-			"name":  "Wesley",
+		// Get the password from the form
+		formPassword := r.Form.Get("Password")
+		password, ok := users[admin]
+		if !ok || password != formPassword {
+			w.Header().Set("Content-Type", "text/html")
+			w.WriteHeader(http.StatusOK)
+			fmt.Fprint(w, `<div class="text-red-500">Login failed. Please try again.</div>`)
+			return
+		}
+
+		_, tokenString, err := tokenAuth.Encode(jwt.MapClaims{
+			"name":  admin,
 			"admin": true,
 			"exp":   time.Now().Add(time.Hour * 72).Unix(),
-		}
-
-		// Create token
-		token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-
-		// Generate encoded token and send it as response.
-		t, err := token.SignedString([]byte("secret"))
-		if err != nil {
-			return c.SendStatus(fiber.StatusInternalServerError)
-		}
-
-		c.Cookie(&fiber.Cookie{
-			Name:     "authToken",
-			Value:    t,
-			Expires:  time.Now().Add(72 * time.Hour),
-			HTTPOnly: true,  // This means the cookie is not accessible via JavaScript
-			Secure:   true,  // Use this if your app is served over HTTPS
-			SameSite: "Lax", // CSRF protection. You can also consider "Strict" based on your needs.
 		})
+		if err != nil {
+			http.Error(w, "Error encoding token", http.StatusInternalServerError)
+			return
+		}
 
-		c.Set("HX-Redirect", "/")
-		return c.SendString("Logged in!")
+		cookie := http.Cookie{
+			Name:     "authToken",
+			Value:    tokenString,
+			Expires:  time.Now().Add(72 * time.Hour),
+			HttpOnly: true, // This means the cookie is not accessible via JavaScript
+			Secure:   true, // Use this if your app is served over HTTPS
+			SameSite: http.SameSiteLaxMode,
+		}
+		http.SetCookie(w, &cookie)
+
+		w.Header().Set("HX-Redirect", "/")
+		fmt.Fprint(w, "Logged in!")
 	}
 }
 
-func handleMedicineEntry(client *notionapi.Client, medicinePageID string) fiber.Handler {
-	return func(c *fiber.Ctx) error {
-		type Payload struct {
-			Medicine string
-			Note     string
-		}
-
-		var payload Payload
-		if err := c.BodyParser(&payload); err != nil {
-			return err
-		}
-
-		page, err := notion.AppendMedicineEntry(client, medicinePageID, payload.Medicine, payload.Note)
-		if err != nil {
-			return err
-		}
-		loc, _ := time.LoadLocation("Local")
-		created := page.CreatedTime.In(loc).Format("2006-01-02 03:04PM")
-		doseProp, ok := page.Properties["Dose"].(*notionapi.TitleProperty)
-		if !ok {
-			return fmt.Errorf("Error unwrapping Dose returned from page")
-		}
-		dose := doseProp.Title[0].Text.Content
-		return c.SendString(fmt.Sprintf(`<div id="med-response-target" class="text-xs text-stone-600" hx-ext="remove-me"><div remove-me="5s">%s dose %s :: %s</div></div>`, payload.Medicine, dose, created))
+func handleMedicineEntry(w http.ResponseWriter, r *http.Request, client *notionapi.Client, medicinePageID string) {
+	type Payload struct {
+		Medicine string
+		Note     string
 	}
+
+	var payload Payload
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&payload); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	page, err := notion.AppendMedicineEntry(client, medicinePageID, payload.Medicine, payload.Note)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	loc, _ := time.LoadLocation("Local")
+	created := page.CreatedTime.In(loc).Format("2006-01-02 03:04PM")
+	doseProp, ok := page.Properties["Dose"].(*notionapi.TitleProperty)
+	if !ok {
+		http.Error(w, "Error unwrapping Dose returned from page", http.StatusInternalServerError)
+		return
+	}
+	dose := doseProp.Title[0].Text.Content
+	response := fmt.Sprintf(`<div id="med-response-target" class="text-xs text-stone-600" hx-ext="remove-me"><div remove-me="5s">%s dose %s :: %s</div></div>`, payload.Medicine, dose, created)
+
+	w.Header().Set("Content-Type", "text/html")
+	w.Write([]byte(response))
 }
 
-func handleDigestionEntry(client *notionapi.Client, digestionDbID string) fiber.Handler {
-	return func(c *fiber.Ctx) error {
-		type Payload struct {
-			Bristol int
-			Size    string
-			Note    string
-		}
-
-		var payload Payload
-		if err := c.BodyParser(&payload); err != nil {
-			return err
-		}
-
-		page, err := notion.AppendDigestionEntry(client, digestionDbID, payload.Bristol, payload.Size, payload.Note)
-		if err != nil {
-			return err
-		}
-
-		loc, _ := time.LoadLocation("Local")
-		created := page.CreatedTime.In(loc).Format("2006-01-02 03:04PM")
-		c.Set("Content-Type", "text/html")
-		return c.SendString(fmt.Sprintf(`<div id="dig-response-target" class="text-xs text-stone-600" hx-ext="remove-me"><div remove-me="5s">New Entry :: %s</div></div>`, created))
+func handleDigestionEntry(w http.ResponseWriter, r *http.Request, client *notionapi.Client, digestionDbID string) {
+	type Payload struct {
+		Bristol int
+		Size    string
+		Note    string
 	}
+
+	var payload Payload
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&payload); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	page, err := notion.AppendDigestionEntry(client, digestionDbID, payload.Bristol, payload.Size, payload.Note)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	loc, _ := time.LoadLocation("Local")
+	created := page.CreatedTime.In(loc).Format("2006-01-02 03:04PM")
+	response := fmt.Sprintf(`<div id="dig-response-target" class="text-xs text-stone-600" hx-ext="remove-me"><div remove-me="5s">New Entry :: %s</div></div>`, created)
+
+	w.Header().Set("Content-Type", "text/html")
+	w.Write([]byte(response))
 }
