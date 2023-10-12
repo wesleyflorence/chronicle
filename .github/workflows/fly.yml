@@ -21,7 +21,7 @@ jobs:
 
       # Build the CSS using the standalone TailwindCSS CLI
       - name: Build CSS
-        run: ./tailwindcss -i assets/input.css -o public/output.css --minify
+        run: ./tailwindcss -i web/input.css -o web/public/output.css --minify
       
       - uses: superfly/flyctl-actions/setup-flyctl@master
       
