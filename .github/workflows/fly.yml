@@ -26,7 +26,7 @@ jobs:
       - uses: superfly/flyctl-actions/setup-flyctl@master
       
       - name: Inject commit hash into serviceworker
-        run: sed -i "s/<PLACEHOLDER>/${{ github.sha }}/g" public/serviceworker.js
+        run: sed -i "s/<PLACEHOLDER>/${{ github.sha }}/g" web/public/serviceworker.js
         
       - run: flyctl deploy --remote-only
         env:
