@@ -1,3 +1,4 @@
+//Package routes sets up routes
 package routes
 
 import (
@@ -12,13 +13,18 @@ import (
 	"github.com/wesleyflorence/chronicle/handlers"
 )
 
+// SetupRoutes defines the endpoints and functions that are called
 func SetupRoutes(r *chi.Mux, tmpl *template.Template) {
 	notionAPIKey := os.Getenv("NOTION_API_KEY")
 	digestionDbID := os.Getenv("DIGESTION_DB")
 	medicinePageID := os.Getenv("MEDICINE_PAGE")
+	username := os.Getenv("CHRONICLE_USERNAME")
+	password := os.Getenv("CHRONICLE_PW")
 	jwtSecret := os.Getenv("JWT_SECRET")
 	tokenAuth := jwtauth.New("HS256", []byte(jwtSecret), nil)
-	users := setupUsers()
+	users := map[string]string{
+		username: password,
+	}
 	client := notionapi.NewClient(notionapi.Token(notionAPIKey))
 
 	workDir, _ := os.Getwd()
@@ -49,13 +55,4 @@ func SetupRoutes(r *chi.Mux, tmpl *template.Template) {
 			handlers.MedicineEntry(w, r, client, medicinePageID)
 		})
 	})
-}
-
-func setupUsers() map[string]string {
-	username := os.Getenv("CHRONICLE_USERNAME")
-	password := os.Getenv("CHRONICLE_PW")
-	users := map[string]string{
-		username: password,
-	}
-	return users
 }

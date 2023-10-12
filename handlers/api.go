@@ -1,3 +1,4 @@
+// Package handlers defines route handlers
 package handlers
 
 import (
@@ -11,6 +12,7 @@ import (
 	"github.com/wesleyflorence/chronicle/notion"
 )
 
+// MedicineEntry parses medicine form and stores values in notion
 func MedicineEntry(w http.ResponseWriter, r *http.Request, client *notionapi.Client, medicinePageID string) {
 	type Payload struct {
 		Medicine string
@@ -48,6 +50,7 @@ func MedicineEntry(w http.ResponseWriter, r *http.Request, client *notionapi.Cli
 	w.Write([]byte(response))
 }
 
+// DigestionEntry parses medicine form and stores values in notion
 func DigestionEntry(w http.ResponseWriter, r *http.Request, client *notionapi.Client, digestionDbID string) {
 	type Payload struct {
 		Bristol int

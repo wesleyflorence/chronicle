@@ -1,3 +1,4 @@
+// Package handlers defines route handlers
 package handlers
 
 import (
@@ -7,7 +8,7 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-// Serve Static Files
+// FileServer serves static files
 func FileServer(r chi.Router, path string, root http.FileSystem) {
 	if strings.ContainsAny(path, "{}*") {
 		panic("FileServer does not permit any URL parameters.")

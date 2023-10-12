@@ -1,3 +1,4 @@
+// Package handlers defines route handlers
 package handlers
 
 import (
@@ -13,6 +14,7 @@ import (
 
 const admin = "wesley"
 
+// Home handles login status for rendering templates
 func Home(w http.ResponseWriter, r *http.Request, tokenAuth *jwtauth.JWTAuth, tmpl *template.Template) {
 	isLoggedIn := false
 	cookie, _ := r.Cookie("jwt")
@@ -39,6 +41,7 @@ func Home(w http.ResponseWriter, r *http.Request, tokenAuth *jwtauth.JWTAuth, tm
 	}
 }
 
+// Logout clears the cookie
 func Logout(w http.ResponseWriter, _ *http.Request) {
 	http.SetCookie(w, &http.Cookie{
 		Name:     "jwt",
@@ -51,6 +54,7 @@ func Logout(w http.ResponseWriter, _ *http.Request) {
 	w.Write([]byte("Logged out"))
 }
 
+// Login does JWT auth
 func Login(w http.ResponseWriter, r *http.Request, users map[string]string, tokenAuth *jwtauth.JWTAuth) {
 	err := r.ParseForm()
 	if err != nil {
