@@ -3,7 +3,7 @@ package components
 templ MedSuccess(medicine, dose, created string) {
 	<div 
 		id="med-response-target" 
-		class="text-xs text-stone-600" 
+		class="font-mono text-xs text-stone-600" 
 		hx-ext="remove-me">
 		<div remove-me="5s">
 			{ medicine} dose { dose } :: { created }
@@ -15,10 +15,16 @@ templ MedSuccess(medicine, dose, created string) {
 templ DigSuccess(created string) {
 	<div 
 		id="dig-response-target" 
-		class="text-xs text-stone-600" 
+		class="font-mono text-xs text-stone-600" 
 		hx-ext="remove-me">
 		<div remove-me="5s">
 			New Entry :: { created }
 		</div>
 	</div>
+}
+
+templ LoginFailed() {
+  <div class="text-red-500">
+    Login failed. Please try again.
+  </div>
 }

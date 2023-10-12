@@ -35,12 +35,19 @@
     </style>
 	</head>
 	<body>
-
-		{{if not .IsLoggedIn}}
+		<main>
+			{{if not .IsLoggedIn}}
 			{{template "login" .}}
-		{{else}}
+			{{else}}
 			{{template "forms" .}}
-		{{end}}
+			{{end}}
+		</main>
+
+		<footer class="w-full p-1">
+			<div class="container mx-auto flex justify-center">
+				<h1 class="text-lg">🦀</h1>
+			</div>
+		</footer>
 
 	</body>
 </html>

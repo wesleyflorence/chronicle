@@ -10,6 +10,7 @@ import (
 
 	"github.com/go-chi/jwtauth"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/wesleyflorence/chronicle/components"
 )
 
 const admin = "wesley"
@@ -67,7 +68,8 @@ func Login(w http.ResponseWriter, r *http.Request, users map[string]string, toke
 	if !ok || password != formPassword {
 		w.Header().Set("Content-Type", "text/html")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprint(w, `<div class="text-red-500">Login failed. Please try again.</div>`)
+		component := components.LoginFailed()
+		component.Render(r.Context(), w)
 		return
 	}
 

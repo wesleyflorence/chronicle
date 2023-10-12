@@ -2,8 +2,8 @@
 <!-- Digestion Form -->
 <div class="mt-6 p-6">
   <form hx-post="/api/v1/dig" hx-trigger="submit" hx-target="#dig-response-target" hx-swap="outerHTML" hx-timeout="60000"
-    class="mb-6 rounded bg-stone-900 p-6 text-stone-100 shadow-md">
-    <h2 class="mb-4 text-xl text-stone-400">Digestion</h2>
+    class="mb-6 rounded p-6 text-stone-100">
+    <h2 class="mb-4 text-xl text-stone-400 font-bold">Digestion</h2>
 
     <!-- Bristol -->
     <fieldset class="mb-4">
@@ -12,18 +12,18 @@
             {{ range $i := .BristolSlice }}
             <li>
                 <input type="radio" id="bristol{{ $i }}" name="bristol" value="{{ $i }}" class="peer hidden">
-                <label for="bristol{{ $i }}" class="inline-flex cursor-pointer items-center justify-between rounded-full border border-stone-700 bg-stone-800 p-2 text-stone-300 hover:bg-stone-700 peer-checked:border-amber-500 peer-checked:text-amber-500">{{ $i }}</label>
+                <label for="bristol{{ $i }}" class="inline-flex cursor-pointer items-center justify-between rounded-full border border-stone-800 bg-stone-800 p-2 text-stone-300 hover:bg-stone-700 peer-checked:border-amber-500 peer-checked:text-amber-500">{{ $i }}</label>
             </li>
             {{ end }}
         </ul>
     </fieldset>
 
 
-    <div class="mb-4 flex space-x-4">
+    <div class="mb-4 flex space-x-2">
       <!-- Size -->
       <fieldset class="w-32">
         <select name="size"
-          class="w-full rounded border border-stone-700 bg-stone-800 p-2 text-stone-100 placeholder-stone-400">
+          class="w-full rounded-lg border border-stone-800 bg-stone-800 p-2 text-stone-100 placeholder-stone-400">
           <option value="Tiny">Tiny</option>
           <option value="Small">Small</option>
           <option value="Medium">Medium</option>
@@ -34,12 +34,13 @@
       <!-- Note -->
       <div class="flex-grow">
         <input type="text" name="note" id="note2" placeholder="Note"
-          class="w-full rounded border border-stone-700 bg-stone-800 p-2 text-stone-100 placeholder-stone-400">
+          class="w-full rounded-lg border border-stone-800 bg-stone-800 p-2 text-stone-100 placeholder-stone-400">
       </div>
     </div>
     <div class="flex items-center">
-      <button type="submit" hx-indicator="#dig-indicator"
-        class="rounded bg-amber-600 p-2 text-stone-900 hover:bg-amber-700 focus:ring focus:ring-amber-300">Submit</button>
+
+
+	<button type="button" type="submit" hx-indicator="#dig-indicator" class="text-white bg-gradient-to-r from-amber-500 via-amber-550 to-amber-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-amber-300 dark:focus:ring-amber-800 shadow-lg shadow-amber-500/50 dark:shadow-lg dark:shadow-amber-800/40 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">Submit</button>
       <img id="dig-indicator" class="htmx-indicator ml-2" src="/rings.svg">
     </div>
     <div id="dig-response-target"></div>
@@ -47,17 +48,17 @@
 
   <!-- Medicine Form -->
   <form hx-post="/api/v1/med" hx-trigger="submit" hx-target="#med-response-target" hx-swap="outerHTML" hx-timeout="10000"
-    class="rounded bg-stone-900 p-6 text-stone-100 shadow-md">
-    <h2 class="mb-4 text-xl text-stone-400">Medicine</h2>
+    class="rounded p-6 text-stone-100">
+    <h2 class="mb-4 text-xl text-stone-400 font-bold">Medicine</h2>
 
     <!-- Medicine Choice -->
-    <fieldset class="mb-4">
+    <fieldset class="mb-2">
       <ul class="w-full space-y-2">
         <li>
           <!-- Ondansetron Radio Input -->
           <input type="radio" id="ondansetron" name="medicine" value="Ondansetron" class="peer hidden" required>
           <label for="ondansetron"
-            class="inline-flex w-full cursor-pointer items-center justify-between rounded-lg border border-stone-700 bg-stone-800 p-2 text-stone-300 hover:bg-stone-700 peer-checked:border-amber-500 peer-checked:text-amber-500">
+            class="inline-flex w-full cursor-pointer items-center justify-between rounded-lg border border-stone-800 bg-stone-800 p-2 text-stone-300 hover:bg-stone-700 peer-checked:border-amber-500 peer-checked:text-amber-500">
             <span>Ondansetron</span>
           </label>
         </li>
@@ -66,7 +67,7 @@
           <!-- Dexamethason Radio Input -->
           <input type="radio" id="dexamethason" name="medicine" value="Dexamethason" class="peer hidden">
           <label for="dexamethason"
-            class="inline-flex w-full cursor-pointer items-center justify-between rounded-lg border border-stone-700 bg-stone-800 p-2 text-stone-300 hover:bg-stone-700 peer-checked:border-amber-500 peer-checked:text-amber-500">
+            class="inline-flex w-full cursor-pointer items-center justify-between rounded-lg border border-stone-800 bg-stone-800 p-2 text-stone-300 hover:bg-stone-700 peer-checked:border-amber-500 peer-checked:text-amber-500">
             <span>Dexamethason</span>
           </label>
         </li>
@@ -76,12 +77,11 @@
     <!-- Note -->
     <div class="mb-4">
       <input type="text" name="note" id="note2" placeholder="Note"
-        class="w-full rounded border border-stone-700 bg-stone-800 p-2 text-stone-100 placeholder-stone-400">
+        class="w-full rounded-lg border border-stone-800 bg-stone-800 p-2 text-stone-100 placeholder-stone-400">
     </div>
 
     <div class="flex items-center">
-      <button type="submit" hx-indicator="#med-indicator"
-        class="rounded bg-amber-600 p-2 text-stone-900 hover:bg-amber-700 focus:ring focus:ring-amber-300">Submit</button>
+	<button type="button" type="submit" hx-indicator="#med-indicator" class="text-white bg-gradient-to-r from-amber-500 via-amber-550 to-amber-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-amber-300 dark:focus:ring-amber-800 shadow-lg shadow-amber-500/50 dark:shadow-lg dark:shadow-amber-800/40 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">Submit</button>
       <img id="med-indicator" class="htmx-indicator ml-2" src="/rings.svg">
     </div>
     <div id="med-response-target"></div>
@@ -91,6 +91,6 @@
 <div class="flex justify-center">
   <!-- Logout Button in Navigation -->
   <button hx-get="/logout" hx-trigger="click"
-    class="rounded bg-stone-800 p-1 text-stone-400 hover:bg-stone-700">Logout</button>
+    class="rounded-lg bg-stone-800 p-2 text-stone-400 hover:bg-stone-700 text-sm px-4 py-2 text-center mr-1.5 mb-1.5">Logout</button>
 </div>
 {{end}}
