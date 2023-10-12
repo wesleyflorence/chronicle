@@ -2,13 +2,13 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"html/template"
 	"log"
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
@@ -25,10 +25,6 @@ const admin = "wesley"
 
 var tokenAuth = jwtauth.New("HS256", []byte("secret"), nil)
 var tmpl *template.Template
-
-type Payload struct {
-	Password string
-}
 
 func init() {
 	if err := godotenv.Load(); err != nil {
@@ -77,28 +73,18 @@ func setupRoutes(r *chi.Mux) {
 	users := setupUsers()
 	client := notionapi.NewClient(notionapi.Token(notionAPIKey))
 
-	// Serve static files
-	FileServer(r, "/public", http.Dir("./public"))
+	workDir, _ := os.Getwd()
+	filesDir := http.Dir(filepath.Join(workDir, "public"))
+	FileServer(r, "/", filesDir)
 
 	r.Group(func(r chi.Router) {
 		// Public routes
 		r.Get("/", handleHome)
 		r.Post("/api/v1/login", handleLogin(users)) // Pass the users map to the login handler
-	})
-
-	// Protected routes
-	r.Group(func(r chi.Router) {
-		// Seek, verify and validate JWT tokens
-		r.Use(jwtauth.Verifier(tokenAuth))
-
-		// Handle valid / invalid tokens. This can be modified
-		// based on the requirements of your application.
-		r.Use(jwtauth.Authenticator)
-
 		r.Get("/logout", func(w http.ResponseWriter, r *http.Request) {
-			// Clear the authToken cookie
+			// Clear the jwt cookie
 			http.SetCookie(w, &http.Cookie{
-				Name:     "authToken",
+				Name:     "jwt",
 				Value:    "",
 				Path:     "/",
 				Expires:  time.Unix(0, 0),
@@ -109,6 +95,17 @@ func setupRoutes(r *chi.Mux) {
 			w.Header().Set("HX-Redirect", "/")
 			w.Write([]byte("Logged out"))
 		})
+
+	})
+
+	// Protected routes
+	r.Group(func(r chi.Router) {
+		// Seek, verify and validate JWT tokens
+		r.Use(jwtauth.Verifier(tokenAuth))
+
+		// Handle valid / invalid tokens. This can be modified
+		// based on the requirements of your application.
+		r.Use(jwtauth.Authenticator)
 
 		// Now define the routes that require a valid JWT
 		r.Post("/api/v1/dig", func(w http.ResponseWriter, r *http.Request) {
@@ -125,10 +122,8 @@ func setupRoutes(r *chi.Mux) {
 // static files from a http.FileSystem.
 func FileServer(r chi.Router, path string, root http.FileSystem) {
 	if strings.ContainsAny(path, "{}*") {
-		panic("FileServer does not permit URL parameters.")
+		panic("FileServer does not permit any URL parameters.")
 	}
-
-	fs := http.StripPrefix(path, http.FileServer(root))
 
 	if path != "/" && path[len(path)-1] != '/' {
 		r.Get(path, http.RedirectHandler(path+"/", 301).ServeHTTP)
@@ -136,23 +131,28 @@ func FileServer(r chi.Router, path string, root http.FileSystem) {
 	}
 	path += "*"
 
-	r.Get(path, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	r.Get(path, func(w http.ResponseWriter, r *http.Request) {
+		rctx := chi.RouteContext(r.Context())
+		pathPrefix := strings.TrimSuffix(rctx.RoutePattern(), "/*")
+		fs := http.StripPrefix(pathPrefix, http.FileServer(root))
 		fs.ServeHTTP(w, r)
-	}))
+	})
 }
 
 func handleHome(w http.ResponseWriter, r *http.Request) {
-	cookie, _ := r.Cookie("authToken")
-	if cookie != nil {
-		fmt.Printf("COOKIE : %+v", cookie.Value)
-	}
-
-	// TODO this is broken and I cant log in
-
+	var name string
 	isLoggedIn := false
+	cookie, _ := r.Cookie("jwt")
+	if cookie != nil {
+		token, _ := tokenAuth.Decode(cookie.Value)
+		name, _ := token.Get("name")
+		if name == admin {
+			isLoggedIn = true
+		}
+	}
 	var title string
 	if isLoggedIn {
-		title = "Chronicle - " //+ claims["name"].(string)
+		title = "Chronicle - " + name
 	} else {
 		title = "Chronicle - Login"
 	}
@@ -202,12 +202,13 @@ func handleLogin(users map[string]string) http.HandlerFunc {
 		}
 
 		cookie := http.Cookie{
-			Name:     "authToken",
+			Name:     "jwt",
 			Value:    tokenString,
 			Expires:  time.Now().Add(72 * time.Hour),
 			HttpOnly: true, // This means the cookie is not accessible via JavaScript
 			Secure:   true, // Use this if your app is served over HTTPS
 			SameSite: http.SameSiteLaxMode,
+			Path:     "/",
 		}
 		http.SetCookie(w, &cookie)
 
@@ -222,11 +223,14 @@ func handleMedicineEntry(w http.ResponseWriter, r *http.Request, client *notiona
 		Note     string
 	}
 
-	var payload Payload
-	decoder := json.NewDecoder(r.Body)
-	if err := decoder.Decode(&payload); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	// Parse form data
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "Error parsing form data", http.StatusBadRequest)
 		return
+	}
+	payload := Payload{
+		Medicine: r.Form.Get("medicine"),
+		Note:     r.Form.Get("note"),
 	}
 
 	page, err := notion.AppendMedicineEntry(client, medicinePageID, payload.Medicine, payload.Note)
@@ -255,11 +259,20 @@ func handleDigestionEntry(w http.ResponseWriter, r *http.Request, client *notion
 		Note    string
 	}
 
-	var payload Payload
-	decoder := json.NewDecoder(r.Body)
-	if err := decoder.Decode(&payload); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	// Parse form data
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "Error parsing form data", http.StatusBadRequest)
 		return
+	}
+	bristol, err := strconv.Atoi(r.Form.Get("bristol"))
+	if err != nil {
+		http.Error(w, "Invalid value for Bristol", http.StatusBadRequest)
+		return
+	}
+	payload := Payload{
+		Bristol: bristol,
+		Size:    r.Form.Get("size"),
+		Note:    r.Form.Get("note"),
 	}
 
 	page, err := notion.AppendDigestionEntry(client, digestionDbID, payload.Bristol, payload.Size, payload.Note)
