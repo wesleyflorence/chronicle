@@ -1,13 +1,10 @@
 const CACHE_NAME = 'app-cache-<PLACEHOLDER>';
 const urlsToCache = [
   '/',
-  '/public/output.css',
-  '/public/favicon.ico',
-  '/public/rings.svg',
-  '/views/index.html',
-  '/views/layouts/main.html',
-  '/views/partials/forms.html',
-  '/views/partials/login.html'
+  '/output.css',
+  '/favicon.ico',
+  '/rings.svg',
+  '/index.html',
 ];
 
 self.addEventListener('install', event => {
