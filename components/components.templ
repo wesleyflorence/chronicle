@@ -1,12 +1,24 @@
-package main
+package components
 
-templ medSuccess(medicine, dose, created string) {
+templ MedSuccess(medicine, dose, created string) {
 	<div 
 		id="med-response-target" 
 		class="text-xs text-stone-600" 
 		hx-ext="remove-me">
 		<div remove-me="5s">
 			{ medicine} dose { dose } :: { created }
+		</div>
+	</div>
+}
+
+
+templ DigSuccess(created string) {
+	<div 
+		id="dig-response-target" 
+		class="text-xs text-stone-600" 
+		hx-ext="remove-me">
+		<div remove-me="5s">
+			New Entry :: { created }
 		</div>
 	</div>
 }

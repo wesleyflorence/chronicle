@@ -26,7 +26,7 @@ func main() {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 
-	tmpl, err := template.ParseGlob(filepath.Join("views", "*.html"))
+	tmpl, err := template.ParseGlob(filepath.Join("web/views", "*.html"))
 	if err != nil {
 		log.Fatal(err)
 	}

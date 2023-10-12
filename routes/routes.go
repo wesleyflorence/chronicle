@@ -28,7 +28,7 @@ func SetupRoutes(r *chi.Mux, tmpl *template.Template) {
 	client := notionapi.NewClient(notionapi.Token(notionAPIKey))
 
 	workDir, _ := os.Getwd()
-	filesDir := http.Dir(filepath.Join(workDir, "public"))
+	filesDir := http.Dir(filepath.Join(workDir, "web/public"))
 	handlers.FileServer(r, "/", filesDir)
 
 	// Public routes

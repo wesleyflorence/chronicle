@@ -13,7 +13,7 @@ primary_region = "sea"
 
 
 [build.args]
-  BP_KEEP_FILES = "public/*:views/*"
+  BP_KEEP_FILES = "web/public/*:web/views/*"
 
 [env]
   PORT = "8080"

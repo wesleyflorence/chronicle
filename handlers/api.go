@@ -2,13 +2,13 @@
 package handlers
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/jomei/notionapi"
+	"github.com/wesleyflorence/chronicle/components"
 	"github.com/wesleyflorence/chronicle/notion"
 )
 
@@ -44,10 +44,8 @@ func MedicineEntry(w http.ResponseWriter, r *http.Request, client *notionapi.Cli
 		return
 	}
 	dose := doseProp.Title[0].Text.Content
-	response := fmt.Sprintf(`<div id="med-response-target" class="text-xs text-stone-600" hx-ext="remove-me"><div remove-me="5s">%s dose %s :: %s</div></div>`, payload.Medicine, dose, created)
-
-	w.Header().Set("Content-Type", "text/html")
-	w.Write([]byte(response))
+	component := components.MedSuccess(payload.Medicine, dose, created)
+	component.Render(r.Context(), w)
 }
 
 // DigestionEntry parses medicine form and stores values in notion
@@ -84,8 +82,6 @@ func DigestionEntry(w http.ResponseWriter, r *http.Request, client *notionapi.Cl
 
 	loc, _ := time.LoadLocation("Local")
 	created := page.CreatedTime.In(loc).Format("2006-01-02 03:04PM")
-	response := fmt.Sprintf(`<div id="dig-response-target" class="text-xs text-stone-600" hx-ext="remove-me"><div remove-me="5s">New Entry :: %s</div></div>`, created)
-
-	w.Header().Set("Content-Type", "text/html")
-	w.Write([]byte(response))
+	component := components.DigSuccess(created)
+	component.Render(r.Context(), w)
 }

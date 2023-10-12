@@ -9,7 +9,7 @@ go-build:
 
 # Build the CSS using TailwindCSS
 css-build:
-	tailwindcss -i assets/input.css -o public/output.css --minify
+	tailwindcss -i web/input.css -o web/public/output.css --minify
 
 # Run the Go server
 run:
@@ -17,5 +17,5 @@ run:
 
 # Watch the CSS for changes with TailwindCSS
 watch-css:
-	tailwindcss -i assets/input.css -o public/output.css --watch
+	tailwindcss -i web/input.css -o web/public/output.css --watch
 
