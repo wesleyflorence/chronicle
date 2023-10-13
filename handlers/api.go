@@ -16,6 +16,7 @@ import (
 func MedicineEntry(w http.ResponseWriter, r *http.Request, client *notionapi.Client, medicinePageID string) {
 	type Payload struct {
 		Medicine string
+		Size     int
 		Note     string
 	}
 
@@ -24,12 +25,24 @@ func MedicineEntry(w http.ResponseWriter, r *http.Request, client *notionapi.Cli
 		http.Error(w, "Error parsing form data", http.StatusBadRequest)
 		return
 	}
+
 	payload := Payload{
 		Medicine: r.Form.Get("medicine"),
 		Note:     r.Form.Get("note"),
 	}
 
-	page, err := notion.AppendMedicineEntry(client, medicinePageID, payload.Medicine, payload.Note)
+	if (r.Form.Get("milkOfMagnesia")) != "" {
+		size, err := strconv.Atoi(r.Form.Get("milkOfMagnesia"))
+		if err != nil {
+			log.Printf("Error parsing bristol value: %v", err)
+			http.Error(w, "Invalid value for Bristol", http.StatusBadRequest)
+			return
+		}
+		payload.Medicine = "Milk of Magnesia"
+		payload.Size = size
+	}
+
+	page, err := notion.AppendMedicineEntry(client, medicinePageID, payload.Medicine, payload.Size, payload.Note)
 	if err != nil {
 		log.Printf("Error appending medicine entry: %v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

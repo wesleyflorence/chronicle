@@ -19,9 +19,91 @@
 				<span>Dexamethason</span>
 			</label>
 		</li>
+
+        <li>
+            <!-- Milk of Magnesia Dropdown Input -->
+            <select id="milkOfMagnesia" name="milkOfMagnesia" class="w-full rounded-lg border border-stone-800 bg-stone-800 p-2 text-stone-100 placeholder-stone-400">
+                <option disabled selected value>Milk of Magnesia</option>
+                <option value="30">30</option>
+                <option value="45">45</option>
+                <option value="60">60</option>
+            </select>
+        </li>
+
 	</ul>
 </fieldset>
 <div class="mb-4">
 	{{template "note"}}
 </div>
+
+<script>
+// Needed to allow Milk of Magnesia dropdown to function as its own button
+document.addEventListener('DOMContentLoaded', (event) => {
+	function resetRadios() {
+		var milkOfMagnesia = document.getElementById('milkOfMagnesia');
+		if (milkOfMagnesia.selectedIndex > 0) {
+			var radios = document.querySelectorAll('input[type=radio][name=medicine]');
+			radios.forEach(function(radio) {
+				if (radio.checked) {
+					radio.checked = false;
+					// Manually trigger a 'change' event on the radio button
+					var event = new Event('change', {
+						'bubbles': true,
+						'cancelable': true
+					});
+					radio.dispatchEvent(event);
+				}
+			});
+		}
+	}
+
+	function resetDropdown() {
+		var milkOfMagnesia = document.getElementById('milkOfMagnesia');
+		milkOfMagnesia.selectedIndex = 0;
+	}
+
+	function validateForm() {
+		var milkOfMagnesia = document.getElementById('milkOfMagnesia');
+		var ondansetron = document.getElementById('ondansetron');
+		var dexamethason = document.getElementById('dexamethason');
+
+		if (milkOfMagnesia.selectedIndex > 0) {
+			// If Milk of Magnesia is selected, the radio buttons are not required
+			ondansetron.required = false;
+			dexamethason.required = false;
+		} else {
+			// If Milk of Magnesia is not selected, at least one radio button is required
+			ondansetron.required = true;
+		}
+	}
+
+	// Call validateForm on change of the dropdown or the radio buttons
+	document.getElementById('milkOfMagnesia').addEventListener('change', function() {
+		resetRadios();
+		validateForm();
+	});
+
+	var radios = document.querySelectorAll('input[type=radio][name=medicine]');
+	radios.forEach(function(radio) {
+		radio.addEventListener('change', function() {
+			validateForm();
+		});
+	});
+
+	// Add the event listeners
+	document.getElementById('ondansetron').addEventListener('change', function() {
+		if(this.checked) {
+			resetDropdown();
+		}
+	});
+	document.getElementById('dexamethason').addEventListener('change', function() {
+		if(this.checked) {
+			resetDropdown();
+		}
+	});
+	document.getElementById('milkOfMagnesia').addEventListener('change', function() {
+		resetRadios();
+	});
+});
+</script>
 {{end}}

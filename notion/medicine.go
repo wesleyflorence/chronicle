@@ -16,7 +16,7 @@ import (
 // It retrieves the medicine block ID, medicine database ID, and dose from the Notion client.
 // Then, it appends a new row to the medicine database with the current date, dose, status, note, and chronicle properties.
 // Finally, it returns the created page or an error if any occurred.
-func AppendMedicineEntry(client *notionapi.Client, medicinePageID, medicine, note string) (*notionapi.Page, error) {
+func AppendMedicineEntry(client *notionapi.Client, medicinePageID, medicine string, size int, note string) (*notionapi.Page, error) {
 	medicineBlockID, err := getMedicineBlockID(client, medicinePageID, medicine)
 	if err != nil {
 		log.Println("Error retrieving Medicine Block ID")
@@ -63,6 +63,12 @@ func AppendMedicineEntry(client *notionapi.Client, medicinePageID, medicine, not
 			Checkbox: true,
 		},
 	}
+
+	if medicine == "Milk of Magnesia" {
+		props["mL"] = notionapi.NumberProperty{
+				Number: float64(size)}
+	}
+
 	request := buildPageCreateRequest(dbID.String(), &props)
 	return client.Page.Create(context.Background(), &request)
 }
