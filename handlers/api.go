@@ -48,7 +48,7 @@ func MedicineEntry(w http.ResponseWriter, r *http.Request, client *notionapi.Cli
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	loc, _ := time.LoadLocation("Local")
+	loc, _ := time.LoadLocation("America/Los_Angeles")
 	created := page.CreatedTime.In(loc).Format("2006-01-02 03:04PM")
 	doseProp, ok := page.Properties["Dose"].(*notionapi.TitleProperty)
 	if !ok {
