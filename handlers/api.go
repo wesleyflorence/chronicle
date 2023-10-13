@@ -34,8 +34,8 @@ func MedicineEntry(w http.ResponseWriter, r *http.Request, client *notionapi.Cli
 	if (r.Form.Get("milkOfMagnesia")) != "" {
 		size, err := strconv.Atoi(r.Form.Get("milkOfMagnesia"))
 		if err != nil {
-			log.Printf("Error parsing bristol value: %v", err)
-			http.Error(w, "Invalid value for Bristol", http.StatusBadRequest)
+			log.Printf("Error parsing milkOfMagnesia value: %v", err)
+			http.Error(w, "Invalid value for milkOfMagnesia", http.StatusBadRequest)
 			return
 		}
 		payload.Medicine = "Milk of Magnesia"
