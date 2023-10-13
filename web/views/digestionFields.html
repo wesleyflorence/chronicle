@@ -1,0 +1,33 @@
+{{define "digestionFields"}}
+<!-- Bristol -->
+<fieldset class="mb-4">
+	<ul class="flex space-x-3">
+		{{ range $i := .BristolSlice }}
+		<li>
+			<input type="radio" id="bristol{{ $i }}" name="bristol" value="{{ $i }}" class="peer hidden">
+			<label for="bristol{{ $i }}"
+				class="inline-flex cursor-pointer items-center justify-between rounded-full border border-stone-800 bg-stone-800 p-2 text-stone-300 hover:bg-stone-900 peer-checked:border-amber-500 peer-checked:text-amber-500">{{ $i }}</label>
+		</li>
+		{{ end }}
+	</ul>
+</fieldset>
+
+
+<div class="mb-4 flex space-x-2">
+	<!-- Size -->
+	<fieldset class="w-32">
+		<select name="size"
+			class="w-full rounded-lg border border-stone-800 bg-stone-800 p-2 text-stone-100 placeholder-stone-400">
+			<option value="Tiny">Tiny</option>
+			<option value="Small">Small</option>
+			<option value="Medium">Medium</option>
+			<option value="Large">Large</option>
+		</select>
+	</fieldset>
+
+	<!-- Note -->
+	<div class="flex-grow">
+		{{template "note"}}
+	</div>
+</div>
+{{end}}

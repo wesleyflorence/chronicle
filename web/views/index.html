@@ -3,8 +3,8 @@
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>{{.Title}}</title>
-    	<link href="/output.css" rel="stylesheet">
+	<title>{{.Title}}</title>
+		<link href="/output.css" rel="stylesheet">
 		<script src="https://unpkg.com/htmx.org"></script>
 		<script src="https://unpkg.com/htmx.org/dist/ext/remove-me.js"></script>
 		<link rel="manifest" href="/manifest.json">
@@ -12,42 +12,30 @@
 		<link rel="apple-touch-icon" href="/icon-192x192.png">
 		<link rel="apple-touch-icon" sizes="512x512" href="/icon-512x512.png">
 		<script>
-  			if ('serviceWorker' in navigator) {
-			  window.addEventListener('load', () => {
-				  navigator.serviceWorker.register('/serviceworker.js').then(registration => {
-					  console.log('Service Worker registered with scope:', registration.scope);
-					  }, err => {
-						  console.error('Service Worker registration failed:', err);
-				  });
-			  });
-		  }
+		if ('serviceWorker' in navigator) {
+			window.addEventListener('load', () => {
+				navigator.serviceWorker.register('/serviceworker.js').then(registration => {
+					console.log('Service Worker registered with scope:', registration.scope);
+					}, err => {
+						console.error('Service Worker registration failed:', err);
+				});
+			});
+		}
 		</script>
-    <style>
-      body {
-          background: linear-gradient(115.58deg, #0C0A09 0%, #2A2624 100.22%), 
-                      radial-gradient(92.72% 100% at 50% 0%, #2C2725 0%, #0A0807 100%), 
-                      radial-gradient(92.72% 100% at 50% 0%, #201C1A 0%, #120F0E 100%), 
-                      radial-gradient(109.21% 213.32% at 100% 0%, #1A1614 0%, #151211 100%), 
-                      linear-gradient(127.43deg, #1E1B19 0%, #0E0C0B 100%);
-          background-blend-mode: lighten, overlay, lighten, screen, normal;
-          min-height: 100vh;
-      }
-    </style>
 	</head>
-	<body>
+	<body class="bg-stone-950 mx-auto max-w-xl">
 		<main>
 			{{if not .IsLoggedIn}}
-			{{template "login" .}}
+				{{template "login" .}}
 			{{else}}
-			{{template "forms" .}}
+				{{template "forms" .}}
+				{{template "logout" .}}
 			{{end}}
 		</main>
-
 		<footer class="w-full p-1">
 			<div class="container mx-auto flex justify-center">
 				<h1 class="text-lg">🦀</h1>
 			</div>
 		</footer>
-
 	</body>
 </html>

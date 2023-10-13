@@ -1,0 +1,27 @@
+{{define "medicineFields"}}
+<!-- Medicine Choice -->
+<fieldset class="mb-2">
+	<ul class="w-full space-y-2">
+		<li>
+			<!-- Ondansetron Radio Input -->
+			<input type="radio" id="ondansetron" name="medicine" value="Ondansetron" class="peer hidden" required>
+			<label for="ondansetron"
+				class="inline-flex w-full cursor-pointer items-center justify-between rounded-lg border border-stone-800 bg-stone-800 p-2 text-stone-300 hover:bg-stone-900 peer-checked:border-amber-500 peer-checked:text-amber-500">
+				<span>Ondansetron</span>
+			</label>
+		</li>
+
+		<li>
+			<!-- Dexamethason Radio Input -->
+			<input type="radio" id="dexamethason" name="medicine" value="Dexamethason" class="peer hidden">
+			<label for="dexamethason"
+				class="inline-flex w-full cursor-pointer items-center justify-between rounded-lg border border-stone-800 bg-stone-800 p-2 text-stone-300 hover:bg-stone-900 peer-checked:border-amber-500 peer-checked:text-amber-500">
+				<span>Dexamethason</span>
+			</label>
+		</li>
+	</ul>
+</fieldset>
+<div class="mb-4">
+	{{template "note"}}
+</div>
+{{end}}
