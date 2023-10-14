@@ -93,7 +93,7 @@ func DigestionEntry(w http.ResponseWriter, r *http.Request, client *notionapi.Cl
 		return
 	}
 
-	loc, _ := time.LoadLocation("Local")
+	loc, _ := time.LoadLocation("America/Los_Angeles")
 	created := page.CreatedTime.In(loc).Format("2006-01-02 03:04PM")
 	component := components.DigSuccess(created)
 	component.Render(r.Context(), w)
