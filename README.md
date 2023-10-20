@@ -22,6 +22,6 @@ I don't write any CSS at my dayjob so this made it very easy and fast to style m
 Simplest possible use case here, but deployment with github actions is a breeze.
 
 #### Nix
-I'm experimenting with Nix on my machines for a more stable dev environment. I made a simple little flake for this project and it works great. This is a pattern I will use for projects going forward. It solves a similar problem as virtual envs more elegantly. It wouldn't be very useful in a team context though I'm afraid as it would require some buy in. Docker might be the right tool for this but I haven't gotten that to stick in my workflow.
+I'm experimenting with Nix on my machines for a more stable dev environment. I made a simple little flake for this project and it works great. This is a pattern I will use for projects going forward. It solves a similar problem as virtual envs more elegantly. It wouldn't be very useful in a team context though I'm afraid as it would require some buy in. Docker might be the right tool for this but I haven't gotten that to stick in my workflow for local development.
 
 
