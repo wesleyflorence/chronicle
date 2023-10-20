@@ -21,7 +21,7 @@ func TestAppendDigestionEntry(t *testing.T) {
 
 	mockedResponse := &notionapi.Page{
 		Object: "page",
-		ID:     "cdac54bc-6a17-4d2d-b088-3f5c8a138022",
+		ID:     "id",
 		Properties: notionapi.Properties{
 			"Bristol (1-7)": &notionapi.NumberProperty{
 				Number: 4,
