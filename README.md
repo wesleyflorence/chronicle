@@ -24,4 +24,6 @@ Simplest possible use case here, but deployment with github actions is a breeze.
 #### Nix
 I'm experimenting with Nix on my machines for a more stable dev environment. I made a simple little flake for this project and it works great. This is a pattern I will use for projects going forward. It solves a similar problem as virtual envs more elegantly. It wouldn't be very useful in a team context though I'm afraid as it would require some buy in. Docker might be the right tool for this but I haven't gotten that to stick in my workflow for local development.
 
+<img width="600" alt="login_img" src="https://github.com/wesleyflorence/chronicle/assets/28170877/b68ab036-31ef-4282-ab61-b9366d510984">
+<img width="600" alt="app_img" src="https://github.com/wesleyflorence/chronicle/assets/28170877/66d23ff7-2b88-4b09-a5db-c63ec470fb52">
 
