@@ -21,9 +21,9 @@
 </fieldset>
 
 
-<div class="mb-4 flex space-x-2">
+<div class="mb-2 flex space-x-2">
 	<!-- Cleaning -->
-	<fieldset class="w-60">
+	<fieldset class="w-full">
 		<select name="activity"
 			class="w-full rounded-lg border border-stone-800 bg-stone-800 p-2 text-stone-300 placeholder-stone-400">
 			<option value="Brush Arm and Hammer">Brush Arm and Hammer</option>
@@ -33,11 +33,9 @@
 			<option value="None">None</option>
 		</select>
 	</fieldset>
-
-	<!-- Note -->
-	<div class="flex-grow">
-		{{template "note"}}
-	</div>
+</div>
+<div class="mb-4">
+	{{template "note"}}
 </div>
 {{end}}
 
