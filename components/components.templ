@@ -23,6 +23,18 @@ templ DigSuccess(created string) {
 	</div>
 }
 
+
+templ OralSuccess(created string) {
+	<div 
+		id="oral-response-target" 
+		class="font-mono text-xs text-stone-600" 
+		hx-ext="remove-me">
+		<div remove-me="5s">
+			New Entry :: { created }
+		</div>
+	</div>
+}
+
 templ LoginFailed() {
   <div class="text-red-500">
     Login failed. Please try again.

@@ -129,6 +129,6 @@ func OralEntry(w http.ResponseWriter, r *http.Request, client *notionapi.Client,
 	loc, _ := time.LoadLocation("America/Los_Angeles")
 	created := page.CreatedTime.In(loc).Format("2006-01-02 03:04PM")
 	//TODO: Oral
-	component := components.DigSuccess(created)
+	component := components.OralSuccess(created)
 	component.Render(r.Context(), w)
 }
