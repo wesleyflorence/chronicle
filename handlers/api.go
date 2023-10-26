@@ -61,7 +61,7 @@ func MedicineEntry(w http.ResponseWriter, r *http.Request, client *notionapi.Cli
 	component.Render(r.Context(), w)
 }
 
-// DigestionEntry parses medicine form and stores values in notion
+// DigestionEntry parses digestion form and stores values in notion
 func DigestionEntry(w http.ResponseWriter, r *http.Request, client *notionapi.Client, digestionDbID string) {
 	type Payload struct {
 		Bristol int
@@ -95,6 +95,40 @@ func DigestionEntry(w http.ResponseWriter, r *http.Request, client *notionapi.Cl
 
 	loc, _ := time.LoadLocation("America/Los_Angeles")
 	created := page.CreatedTime.In(loc).Format("2006-01-02 03:04PM")
+	component := components.DigSuccess(created)
+	component.Render(r.Context(), w)
+}
+
+// OralEntry parses oral hygiene form and stores values in notion
+func OralEntry(w http.ResponseWriter, r *http.Request, client *notionapi.Client, oralDbID string) {
+	type Payload struct {
+		Sensation string
+		Activity  string
+		Note      string
+	}
+
+	if err := r.ParseForm(); err != nil {
+		log.Printf("Error parsing digestion entry: %v", err)
+		http.Error(w, "Error parsing form data", http.StatusBadRequest)
+		return
+	}
+
+	payload := Payload{
+		Sensation: r.Form.Get("sensation"),
+		Activity:  r.Form.Get("activity"),
+		Note:      r.Form.Get("note"),
+	}
+
+	page, err := notion.AppendOralEntry(client, oralDbID, payload.Sensation, payload.Activity, payload.Note)
+	if err != nil {
+		log.Printf("Error appending oral entry: %v", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	loc, _ := time.LoadLocation("America/Los_Angeles")
+	created := page.CreatedTime.In(loc).Format("2006-01-02 03:04PM")
+	//TODO: Oral
 	component := components.DigSuccess(created)
 	component.Render(r.Context(), w)
 }
