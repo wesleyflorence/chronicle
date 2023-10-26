@@ -1,0 +1,42 @@
+{{define "oralFields"}}
+<!-- Sensation -->
+<fieldset class="mb-4">
+	<ul class="flex space-x-3">
+		<li>
+			<input type="radio" id="acidic" name="acidic" value="acidic" class="peer hidden">
+			<label for="acidic"
+				class="inline-flex cursor-pointer items-center justify-between rounded-lg border border-stone-800 bg-stone-800 p-2 text-stone-300 hover:bg-stone-900 peer-checked:border-amber-500 peer-checked:text-amber-500">Acidic</label>
+		</li>
+		<li>
+			<input type="radio" id="yuck" name="yuck" value="yuck" class="peer hidden">
+			<label for="yuck"
+				class="inline-flex cursor-pointer items-center justify-between rounded-lg border border-stone-800 bg-stone-800 p-2 text-stone-300 hover:bg-stone-900 peer-checked:border-amber-500 peer-checked:text-amber-500">Yuck</label>
+		</li>
+		<li>
+			<input type="radio" id="neutral" name="neutral" value="neutral" class="peer hidden">
+			<label for="neutral"
+				class="inline-flex cursor-pointer items-center justify-between rounded-lg border border-stone-800 bg-stone-800 p-2 text-stone-300 hover:bg-stone-900 peer-checked:border-amber-500 peer-checked:text-amber-500">Neutral</label>
+		</li>
+	</ul>
+</fieldset>
+
+
+<div class="mb-4 flex space-x-2">
+	<!-- Cleaning -->
+	<fieldset class="w-32">
+		<select name="size"
+			class="w-full rounded-lg border border-stone-800 bg-stone-800 p-2 text-stone-300 placeholder-stone-400">
+			<option value="BrushArm">Brush Arm</option>
+			<option value="BrushRem">Brush Rem</option>
+			<option value="Wash">Wash</option>
+			<option value="Floss">Floss</option>
+		</select>
+	</fieldset>
+
+	<!-- Note -->
+	<div class="flex-grow">
+		{{template "note"}}
+	</div>
+</div>
+{{end}}
+
