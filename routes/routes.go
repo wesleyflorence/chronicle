@@ -1,4 +1,4 @@
-//Package routes sets up routes
+// Package routes sets up routes
 package routes
 
 import (
@@ -17,6 +17,7 @@ import (
 func SetupRoutes(r *chi.Mux, tmpl *template.Template) {
 	notionAPIKey := os.Getenv("NOTION_API_KEY")
 	digestionDbID := os.Getenv("DIGESTION_DB")
+	oralDbID := os.Getenv("ORAL_DB")
 	medicinePageID := os.Getenv("MEDICINE_PAGE")
 	username := os.Getenv("CHRONICLE_USERNAME")
 	password := os.Getenv("CHRONICLE_PW")
@@ -48,6 +49,9 @@ func SetupRoutes(r *chi.Mux, tmpl *template.Template) {
 	r.Group(func(r chi.Router) {
 		r.Use(jwtauth.Verifier(tokenAuth))
 		r.Use(jwtauth.Authenticator)
+		r.Post("/api/v1/oral", func(w http.ResponseWriter, r *http.Request) {
+			handlers.OralEntry(w, r, client, oralDbID)
+		})
 		r.Post("/api/v1/dig", func(w http.ResponseWriter, r *http.Request) {
 			handlers.DigestionEntry(w, r, client, digestionDbID)
 		})

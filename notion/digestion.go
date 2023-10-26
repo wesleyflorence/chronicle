@@ -3,7 +3,6 @@ package notion
 
 import (
 	"context"
-	"strconv"
 	"time"
 
 	"github.com/jomei/notionapi"
@@ -53,14 +52,6 @@ func AppendDigestionEntry(client *notionapi.Client, dbID string, bristol int, si
 	return client.Page.Create(context.Background(), &request)
 }
 
-// Return the week relative to August 21st
-func weekRelativeToChemoStart(date time.Time) string {
-	startDate := time.Date(date.Year(), time.August, 21, 0, 0, 0, 0, time.UTC)
-	daysDiff := date.Sub(startDate).Hours() / 24
-	weeksDiff := int(daysDiff)/7 + 1
-	return strconv.Itoa(weeksDiff)
-}
-
 func lookupSizeColor(size string) notionapi.Color {
 	switch size {
 	case "Tiny":
@@ -73,6 +64,5 @@ func lookupSizeColor(size string) notionapi.Color {
 		return notionapi.ColorYellow
 	default:
 		return notionapi.ColorBlue
-
 	}
 }
