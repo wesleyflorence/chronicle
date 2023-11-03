@@ -1,4 +1,4 @@
-const CACHE_NAME = 'app-cache-<PLACEHOLDER>';
+const CACHE_NAME = 'app-cache-1-<PLACEHOLDER>';
 const urlsToCache = [
   '/favicon.ico',
   '/rings.svg'
