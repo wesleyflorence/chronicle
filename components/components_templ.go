@@ -22,7 +22,7 @@ func MedSuccess(medicine, dose, created string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		templ_7745c5c3_Ctx = templ.ClearChildren(templ_7745c5c3_Ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div id=\"med-response-target\" class=\"font-mono text-xs text-stone-600\" hx-ext=\"remove-me\"><div remove-me=\"5s\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div id=\"med-response-target\" class=\"font-mono text-xs text-zinc-600\" hx-ext=\"remove-me\"><div remove-me=\"5s\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -83,7 +83,7 @@ func DigSuccess(created string) templ.Component {
 			templ_7745c5c3_Var7 = templ.NopComponent
 		}
 		templ_7745c5c3_Ctx = templ.ClearChildren(templ_7745c5c3_Ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div id=\"dig-response-target\" class=\"font-mono text-xs text-stone-600\" hx-ext=\"remove-me\"><div remove-me=\"5s\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div id=\"dig-response-target\" class=\"font-mono text-xs text-zinc-600\" hx-ext=\"remove-me\"><div remove-me=\"5s\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -121,7 +121,7 @@ func OralSuccess(created string) templ.Component {
 			templ_7745c5c3_Var10 = templ.NopComponent
 		}
 		templ_7745c5c3_Ctx = templ.ClearChildren(templ_7745c5c3_Ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div id=\"oral-response-target\" class=\"font-mono text-xs text-stone-600\" hx-ext=\"remove-me\"><div remove-me=\"5s\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div id=\"oral-response-target\" class=\"font-mono text-xs text-zinc-600\" hx-ext=\"remove-me\"><div remove-me=\"5s\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

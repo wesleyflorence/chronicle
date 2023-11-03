@@ -1,25 +1,25 @@
 {{define "forms"}}
 <div class="mt-6 p-6">
 	<form hx-post="/api/v1/oral" hx-trigger="submit" hx-target="#oral-response-target" hx-swap="outerHTML" hx-timeout="60000"
-		class="mb-6 rounded p-6 text-stone-100">
-		<h2 class="mb-4 text-xl text-stone-400 font-bold">Oral Hygiene</h2>
+		class="mb-3 rounded p-6 text-zinc-100">
+		<h2 class="mb-4 text-xl text-zinc-400 font-bold">Oral Hygiene</h2>
 		{{template "oralFields" .}}
 		{{template "submit" "oral"}}
-		<div id="oral-response-target"></div>
+		<div id="oral-response-target" class="font-mono text-xs text-zinc-600"></div>
 	</form>
 	<form hx-post="/api/v1/dig" hx-trigger="submit" hx-target="#dig-response-target" hx-swap="outerHTML" hx-timeout="60000"
-		class="mb-6 rounded p-6 text-stone-100">
-		<h2 class="mb-4 text-xl text-stone-400 font-bold">Digestion</h2>
+		class="mb-3 rounded p-6 text-zinc-100">
+		<h2 class="mb-4 text-xl text-zinc-400 font-bold">Digestion</h2>
 		{{template "digestionFields" .}}
 		{{template "submit" "dig"}}
-		<div id="dig-response-target"></div>
+		<div id="dig-response-target" class="font-mono text-xs text-zinc-600"></div>
 	</form>
 	<form hx-post="/api/v1/med" hx-trigger="submit" hx-target="#med-response-target" hx-swap="outerHTML" hx-timeout="10000"
-		class="rounded p-6 text-stone-100">
-		<h2 class="mb-4 text-xl text-stone-400 font-bold">Medicine</h2>
+		class="rounded p-6 text-zinc-100">
+		<h2 class="mb-4 text-xl text-zinc-400 font-bold">Medicine</h2>
 		{{template "medicineFields" .}}
 		{{template "submit" "med"}}
-		<div id="med-response-target"></div>
+		<div id="med-response-target" class="font-mono text-xs text-zinc-600"></div>
 	</form>
 </div>
 {{end}}
