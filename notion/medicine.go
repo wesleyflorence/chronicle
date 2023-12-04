@@ -66,7 +66,7 @@ func AppendMedicineEntry(client *notionapi.Client, medicinePageID, medicine stri
 
 	if medicine == "Milk of Magnesia" {
 		props["mL"] = notionapi.NumberProperty{
-				Number: float64(size)}
+			Number: float64(size)}
 	}
 
 	request := buildPageCreateRequest(dbID.String(), &props)
