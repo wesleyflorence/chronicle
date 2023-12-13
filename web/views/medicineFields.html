@@ -76,11 +76,14 @@ document.addEventListener('DOMContentLoaded', (event) => {
 		var milkOfMagnesia = document.getElementById('milkOfMagnesia');
 		var ondansetron = document.getElementById('ondansetron');
 		var dexamethason = document.getElementById('dexamethason');
+		var levofloxacin = document.getElementById('levofloxacin');
+
 
 		if (milkOfMagnesia.selectedIndex > 0) {
 			// If Milk of Magnesia is selected, the radio buttons are not required
 			ondansetron.required = false;
 			dexamethason.required = false;
+			levofloxacin.required = false;
 		} else {
 			// If Milk of Magnesia is not selected, at least one radio button is required
 			ondansetron.required = true;
@@ -102,6 +105,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
 	// Add the event listeners
 	document.getElementById('ondansetron').addEventListener('change', function() {
+		if(this.checked) {
+			resetDropdown();
+		}
+	});
+	document.getElementById('levofloxacin').addEventListener('change', function() {
 		if(this.checked) {
 			resetDropdown();
 		}
