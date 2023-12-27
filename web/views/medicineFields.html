@@ -12,11 +12,11 @@
 		</li>
 
 		<li>
-			<!-- levofloxacin Radio Input -->
-			<input type="radio" id="levofloxacin" name="medicine" value="Levofloxacin" class="peer hidden" required>
-			<label for="levofloxacin"
+			<!-- amoxik Radio Input -->
+			<input type="radio" id="amoxik" name="medicine" value="Amoxik" class="peer hidden" required>
+			<label for="amoxik"
 				class="inline-flex w-full cursor-pointer items-center justify-between rounded-lg border border-zinc-800 bg-zinc-800 p-2 text-zinc-300 hover:bg-zinc-900 peer-checked:border-violet-500 peer-checked:text-violet-500">
-				<span>Levofloxacin</span>
+				<span>Amoxik</span>
 			</label>
 		</li>
 
@@ -76,14 +76,14 @@ document.addEventListener('DOMContentLoaded', (event) => {
 		var milkOfMagnesia = document.getElementById('milkOfMagnesia');
 		var ondansetron = document.getElementById('ondansetron');
 		var dexamethason = document.getElementById('dexamethason');
-		var levofloxacin = document.getElementById('levofloxacin');
+		var amoxik = document.getElementById('amoxik');
 
 
 		if (milkOfMagnesia.selectedIndex > 0) {
 			// If Milk of Magnesia is selected, the radio buttons are not required
 			ondansetron.required = false;
 			dexamethason.required = false;
-			levofloxacin.required = false;
+			amoxik.required = false;
 		} else {
 			// If Milk of Magnesia is not selected, at least one radio button is required
 			ondansetron.required = true;
@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 			resetDropdown();
 		}
 	});
-	document.getElementById('levofloxacin').addEventListener('change', function() {
+	document.getElementById('amoxik').addEventListener('change', function() {
 		if(this.checked) {
 			resetDropdown();
 		}
